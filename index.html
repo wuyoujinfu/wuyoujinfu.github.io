@@ -258,7 +258,7 @@
           </ul>
         </div>
         <div style="text-align:center;margin-top:24px;">
-          <button class="btn btn-primary btn-lg btn-start-match" id="btn-start-personal" onclick="startMatch('个人')">📝 填报资料<br><small style="font-weight:400;opacity:0.85;">开始智能匹配</small></button>
+          <button class="btn btn-primary btn-lg btn-start-match" id="btn-start-personal" onclick="startMatch()">📝 填报资料<br><small style="font-weight:400;opacity:0.85;">开始智能匹配</small></button>
         </div>
       </div>
 
@@ -527,13 +527,11 @@ function selectGateType(type, btn) {
 }
 
 function enterForm() {
-  // 隐藏入口页，显示表单
   var gate = document.getElementById('form-gate');
   var body = document.getElementById('form-body');
   if (gate) gate.style.display = 'none';
   if (body) body.style.display = '';
 
-  // 更新表单标题
   var title = document.getElementById('match-form-title');
   var desc = document.getElementById('match-form-desc');
   if (title) title.textContent = __loanTarget === '企业' ? '🏢 企业资料填报' : '👤 个人资料填报';
@@ -541,19 +539,41 @@ function enterForm() {
     ? '请逐项填写企业信息，最后可上传企业征信报告辅助核对。'
     : '请逐项填写个人信息，最后可上传个人征信报告辅助核对。';
 
-  // 通知 LoanForm 设置贷款类型
   if (typeof LoanForm !== 'undefined' && LoanForm.setTarget) {
     LoanForm.setTarget(__loanTarget);
   }
 
-  // 滚动到表单顶部
   document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// 来自清单页面的跳转，直接进入表单
-function startMatch(target) {
-  __loanTarget = target;
-  enterForm();
+// 返回入口页重新选择
+function backToGate() {
+  var gate = document.getElementById('form-gate');
+  var body = document.getElementById('form-body');
+  var indicator = document.getElementById('step-indicator');
+  var prevBtn = document.getElementById('btn-prev');
+  var nextBtn = document.getElementById('btn-next');
+  if (gate) gate.style.display = '';
+  if (body) body.style.display = 'none';
+  if (indicator) indicator.style.display = 'none';
+  if (prevBtn) prevBtn.style.display = 'none';
+  if (nextBtn) { nextBtn.style.display = ''; nextBtn.textContent = '开始填报 →'; }
+  document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// 来自清单页面的跳转，只展示入口页让用户选择
+function startMatch() {
+  var gate = document.getElementById('form-gate');
+  var body = document.getElementById('form-body');
+  var indicator = document.getElementById('step-indicator');
+  var prevBtn = document.getElementById('btn-prev');
+  var nextBtn = document.getElementById('btn-next');
+  if (gate) gate.style.display = '';
+  if (body) body.style.display = 'none';
+  if (indicator) indicator.style.display = 'none';
+  if (prevBtn) prevBtn.style.display = 'none';
+  if (nextBtn) { nextBtn.style.display = ''; nextBtn.textContent = '开始填报 →'; }
+  document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 </script>
 

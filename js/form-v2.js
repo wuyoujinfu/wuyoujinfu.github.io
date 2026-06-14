@@ -472,8 +472,15 @@ const LoanForm = (function() {
     const nextBtn = document.getElementById('btn-next');
 
     if (prevBtn) {
-      prevBtn.style.display = currentStep > 1 ? '' : 'none';
-      if (currentStep === 1) prevBtn.textContent = '← 上一步';
+      if (currentStep > 1) {
+        prevBtn.style.display = '';
+        prevBtn.textContent = '← 上一步';
+      } else if (currentStep === 1) {
+        prevBtn.style.display = '';
+        prevBtn.textContent = '← 返回选择';
+      } else {
+        prevBtn.style.display = 'none';
+      }
     }
     if (nextBtn) {
       if (currentStep < 4) {
@@ -497,6 +504,11 @@ const LoanForm = (function() {
   }
 
   function prevStep() {
+    if (currentStep === 1) {
+      // 第一步返回入口页
+      if (typeof backToGate === 'function') backToGate();
+      return;
+    }
     if (currentStep > 1) {
       currentStep--;
       renderSteps();
