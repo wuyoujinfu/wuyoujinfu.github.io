@@ -44,7 +44,12 @@ const Matcher = (function() {
   function match(userProfile, products) {
     if (!userProfile || !products || !products.length) return [];
 
-    const results = products.map(product => {
+    // 按贷款对象类型过滤（个人/企业）
+    const targetProducts = userProfile.loanTarget
+      ? products.filter(p => p.targetType === userProfile.loanTarget)
+      : products;
+
+    const results = targetProducts.map(product => {
       return computeMatch(userProfile, product);
     });
 

@@ -18,6 +18,7 @@ const LoanForm = (function() {
 
   // --- 默认表单数据 ---
   const DEFAULT_DATA = {
+    loanTarget: '个人',
     creditScore: 650,
     monthlyIncome: 15000,
     employmentType: '受薪雇员',
@@ -33,6 +34,29 @@ const LoanForm = (function() {
     recentInquiries: 0,
     hasDelinquency: false
   };
+
+  // --- 贷款对象用途映射 ---
+  const PURPOSES_BY_TARGET = {
+    '个人': [
+      { value: '个人消费', label: '个人消费', icon: '🛒' },
+      { value: '购房',     label: '购房',     icon: '🏠' },
+      { value: '购车',     label: '购车',     icon: '🚗' },
+      { value: '教育',     label: '教育',     icon: '📚' },
+      { value: '装修',     label: '装修',     icon: '🔨' }
+    ],
+    '企业': [
+      { value: '经营周转', label: '经营周转', icon: '💼' },
+      { value: '设备采购', label: '设备采购', icon: '⚙️' },
+      { value: '扩大经营', label: '扩大经营', icon: '📈' },
+      { value: '库存备货', label: '库存备货', icon: '📦' },
+      { value: '工资发放', label: '工资发放', icon: '👥' },
+      { value: '供应链融资', label: '供应链融资', icon: '🔗' }
+    ]
+  };
+
+  function getPurposesForTarget(target) {
+    return PURPOSES_BY_TARGET[target] || PURPOSES_BY_TARGET['个人'];
+  }
 
   // --- 就业类型选项 ---
   const EMPLOYMENT_TYPES = [
@@ -117,6 +141,25 @@ const LoanForm = (function() {
   function renderBasicInfo(container) {
     const level = getCreditLevel(formData.creditScore);
     container.innerHTML = `
+      <!-- 贷款对象选择 -->
+      <div class="form-group">
+        <label class="form-label">贷款对象</label>
+        <div class="target-type-grid">
+          <div class="target-card ${formData.loanTarget === '个人' ? 'selected' : ''}"
+               data-target="个人" onclick="LoanForm.selectTarget(this)">
+            <span class="target-icon">👤</span>
+            <span class="target-label">个人贷款</span>
+            <span class="target-desc">消费贷·房贷·车贷·公积金贷</span>
+          </div>
+          <div class="target-card ${formData.loanTarget === '企业' ? 'selected' : ''}"
+               data-target="企业" onclick="LoanForm.selectTarget(this)">
+            <span class="target-icon">🏢</span>
+            <span class="target-label">企业贷款</span>
+            <span class="target-desc">经营贷·税贷·小微贷·供应链</span>
+          </div>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="form-label">
           信用评分
@@ -205,11 +248,16 @@ const LoanForm = (function() {
 
   // --- Step 3: 贷款需求 ---
   function renderLoanNeeds(container) {
+    const purposes = getPurposesForTarget(formData.loanTarget);
+    // 确保当前用途在目标允许范围内
+    if (!purposes.find(p => p.value === formData.loanPurpose)) {
+      formData.loanPurpose = purposes[0].value;
+    }
     container.innerHTML = `
       <div class="form-group">
         <label class="form-label">贷款用途</label>
         <div class="purpose-grid">
-          ${LOAN_PURPOSES.map(p => `
+          ${purposes.map(p => `
             <div class="purpose-card ${formData.loanPurpose === p.value ? 'selected' : ''}"
                  data-purpose="${p.value}" onclick="LoanForm.selectPurpose(this)">
               <span class="purpose-icon">${p.icon}</span>
@@ -249,12 +297,17 @@ const LoanForm = (function() {
   function renderReview(container) {
     const level = getCreditLevel(formData.creditScore);
     const employLabel = EMPLOYMENT_TYPES.find(t => t.value === formData.employmentType)?.label || formData.employmentType;
-    const purposeLabel = LOAN_PURPOSES.find(p => p.value === formData.loanPurpose)?.label || formData.loanPurpose;
+    const purposes = getPurposesForTarget(formData.loanTarget);
+    const purposeLabel = purposes.find(p => p.value === formData.loanPurpose)?.label || formData.loanPurpose;
 
     container.innerHTML = `
       <div class="review-card">
         <h3>📋 信息确认</h3>
         <div class="review-grid">
+          <div class="review-item">
+            <span class="review-label">贷款对象</span>
+            <span class="review-value">${formData.loanTarget === '企业' ? '🏢 企业贷款' : '👤 个人贷款'}</span>
+          </div>
           <div class="review-item">
             <span class="review-label">信用评分</span>
             <span class="review-value" style="color:${level.color}">${formData.creditScore}（${level.label}）</span>
@@ -378,6 +431,20 @@ const LoanForm = (function() {
     saveData();
   }
 
+  function selectTarget(el) {
+    document.querySelectorAll('.target-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    const newTarget = el.dataset.target;
+    if (formData.loanTarget !== newTarget) {
+      formData.loanTarget = newTarget;
+      // 切换对象时重置用途为第一个
+      const purposes = getPurposesForTarget(newTarget);
+      formData.loanPurpose = purposes[0].value;
+    }
+    saveData();
+    renderStep(currentStep);
+  }
+
   function selectPurpose(el) {
     document.querySelectorAll('.purpose-card').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
@@ -426,11 +493,11 @@ const LoanForm = (function() {
 
   // --- 导出公共 API ---
   return {
-    STEPS, EMPLOYMENT_TYPES, LOAN_PURPOSES, CREDIT_LEVELS,
+    STEPS, EMPLOYMENT_TYPES, CREDIT_LEVELS, PURPOSES_BY_TARGET,
     init, getData, prefill, reset,
     nextStep, prevStep, goToStep,
-    updateField, updateRange, updateCheckbox, toggleAsset, selectPurpose,
-    submitMatch, getCreditLevel,
+    updateField, updateRange, updateCheckbox, toggleAsset, selectTarget, selectPurpose,
+    submitMatch, getCreditLevel, getPurposesForTarget,
     DEFAULT_DATA
   };
 
