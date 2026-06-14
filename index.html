@@ -487,5 +487,32 @@
 <script src="js/app-v2.js" defer></script>
 <script src="js/pdf-handler-v2.js" defer></script>
 
+<script>
+// 表单初始状态：隐藏上一步，下一步改为开始填报
+(function() {
+  function patchNav() {
+    var prev = document.getElementById('btn-prev');
+    var next = document.getElementById('btn-next');
+    var indicator = document.getElementById('step-indicator');
+    if (!next) return setTimeout(patchNav, 200);
+    // 初始隐藏步骤条和上一步
+    if (indicator) indicator.style.display = 'none';
+    if (prev) prev.style.display = 'none';
+    next.textContent = '开始填报 →';
+    // 点击后进入正常填报流程
+    next.addEventListener('click', function() {
+      if (indicator) indicator.style.display = '';
+      if (prev) { prev.style.display = ''; prev.textContent = '← 上一步'; }
+      next.textContent = '下一步 →';
+    }, { once: true });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(patchNav, 300); });
+  } else {
+    patchNav();
+  }
+})();
+</script>
+
 </body>
 </html>
