@@ -324,21 +324,48 @@
   <!-- ===== MATCH SECTION ===== -->
   <section id="match-section">
     <div class="container">
-      <span class="section-label" style="display:none;">Smart Match</span>
-      <h2 class="section-title" id="match-form-title">📝 资料填报</h2>
-      <p class="section-desc" id="match-form-desc">请逐项填写以下信息，最后可上传征信报告辅助核对。</p>
 
-      <!-- Step Indicator -->
-      <div class="step-indicator" id="step-indicator"></div>
-
-      <!-- Form Container -->
-      <div id="form-container"></div>
-
-      <!-- Navigation -->
-      <div class="form-nav">
-        <button class="btn btn-outline" id="btn-prev">← 上一步</button>
-        <button class="btn btn-primary" id="btn-next">下一步 →</button>
+      <!-- 初始选择页 -->
+      <div id="form-gate" style="text-align:center;padding:20px 0;">
+        <h2 class="section-title">📝 资料填报</h2>
+        <p class="section-desc" style="margin-left:auto;margin-right:auto;">请选择您要办理的贷款类型，然后开始填写资料</p>
+        <div style="max-width:480px;margin:0 auto;">
+          <div class="form-loan-type-toggle" style="margin-bottom:20px;">
+            <button class="loan-type-btn active" id="gate-btn-personal" onclick="selectGateType('个人',this)">
+              👤 我要办理个人贷款
+            </button>
+            <button class="loan-type-btn" id="gate-btn-business" onclick="selectGateType('企业',this)">
+              🏢 我要办理企业贷款
+            </button>
+          </div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:24px;" id="gate-selected-label">
+            当前选择：<strong>个人贷款</strong>
+          </p>
+          <button class="btn btn-primary btn-lg" id="btn-start-form" onclick="enterForm()">
+            开始填报 →
+          </button>
+        </div>
       </div>
+
+      <!-- 表单正文（初始隐藏） -->
+      <div id="form-body" style="display:none;">
+        <span class="section-label" style="display:none;">Smart Match</span>
+        <h2 class="section-title" id="match-form-title">📝 资料填报</h2>
+        <p class="section-desc" id="match-form-desc">请逐项填写以下信息，最后可上传征信报告辅助核对。</p>
+
+        <!-- Step Indicator -->
+        <div class="step-indicator" id="step-indicator"></div>
+
+        <!-- Form Container -->
+        <div id="form-container"></div>
+
+        <!-- Navigation -->
+        <div class="form-nav">
+          <button class="btn btn-outline" id="btn-prev" style="display:none;">← 上一步</button>
+          <button class="btn btn-primary" id="btn-next">下一步 →</button>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -488,30 +515,46 @@
 <script src="js/pdf-handler-v2.js" defer></script>
 
 <script>
-// 表单初始状态：隐藏上一步，下一步改为开始填报
-(function() {
-  function patchNav() {
-    var prev = document.getElementById('btn-prev');
-    var next = document.getElementById('btn-next');
-    var indicator = document.getElementById('step-indicator');
-    if (!next) return setTimeout(patchNav, 200);
-    // 初始隐藏步骤条和上一步
-    if (indicator) indicator.style.display = 'none';
-    if (prev) prev.style.display = 'none';
-    next.textContent = '开始填报 →';
-    // 点击后进入正常填报流程
-    next.addEventListener('click', function() {
-      if (indicator) indicator.style.display = '';
-      if (prev) { prev.style.display = ''; prev.textContent = '← 上一步'; }
-      next.textContent = '下一步 →';
-    }, { once: true });
+// 资料填报入口逻辑
+var __loanTarget = '个人';
+
+function selectGateType(type, btn) {
+  __loanTarget = type;
+  document.querySelectorAll('.loan-type-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var label = document.getElementById('gate-selected-label');
+  if (label) label.innerHTML = '当前选择：<strong>' + (type === '企业' ? '企业贷款' : '个人贷款') + '</strong>';
+}
+
+function enterForm() {
+  // 隐藏入口页，显示表单
+  var gate = document.getElementById('form-gate');
+  var body = document.getElementById('form-body');
+  if (gate) gate.style.display = 'none';
+  if (body) body.style.display = '';
+
+  // 更新表单标题
+  var title = document.getElementById('match-form-title');
+  var desc = document.getElementById('match-form-desc');
+  if (title) title.textContent = __loanTarget === '企业' ? '🏢 企业资料填报' : '👤 个人资料填报';
+  if (desc) desc.textContent = __loanTarget === '企业'
+    ? '请逐项填写企业信息，最后可上传企业征信报告辅助核对。'
+    : '请逐项填写个人信息，最后可上传个人征信报告辅助核对。';
+
+  // 通知 LoanForm 设置贷款类型
+  if (typeof LoanForm !== 'undefined' && LoanForm.setTarget) {
+    LoanForm.setTarget(__loanTarget);
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(patchNav, 300); });
-  } else {
-    patchNav();
-  }
-})();
+
+  // 滚动到表单顶部
+  document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// 来自清单页面的跳转，直接进入表单
+function startMatch(target) {
+  __loanTarget = target;
+  enterForm();
+}
 </script>
 
 </body>

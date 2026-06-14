@@ -205,11 +205,10 @@ const App = (function() {
 
   // --- 跳转到材料清单 ---
   App.goToChecklist = goToChecklist;
-  App.startMatch = startMatch;
 
   // --- 导出 ---
   return {
-    init, runMatching, resetAll, goToChecklist, startMatch,
+    init, runMatching, resetAll, goToChecklist,
     getProducts: () => products,
     isReady: () => isReady
   };
@@ -218,32 +217,13 @@ const App = (function() {
 
 // --- 全局导航函数 ---
 function goToChecklist(type) {
-  // 高亮 Hero 对应卡片
   document.querySelectorAll('.hero-choice-card').forEach(function(c) {
     c.classList.toggle('selected', c.dataset.target === type);
   });
-  // 切换到对应 tab
   switchChecklist(type);
-  // 滚动到清单区
   setTimeout(function() {
     document.getElementById('checklist').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 100);
-}
-
-function startMatch(target) {
-  // 更新表单标题
-  var title = document.getElementById('match-form-title');
-  var desc = document.getElementById('match-form-desc');
-  if (title) title.textContent = target === '企业' ? '🏢 企业贷款资料填报' : '👤 个人贷款资料填报';
-  if (desc) desc.textContent = target === '企业'
-    ? '请逐项填写企业信息，最后可上传企业征信报告辅助核对。'
-    : '请逐项填写个人信息，最后可上传个人征信报告辅助核对。';
-  // 设置表单贷款对象
-  if (typeof LoanForm !== 'undefined') LoanForm.setTarget(target);
-  // 滚动到匹配区
-  setTimeout(function() {
-    document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 150);
 }
 
 function switchChecklist(type) {
