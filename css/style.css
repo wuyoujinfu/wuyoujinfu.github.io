@@ -157,9 +157,10 @@ section:nth-child(even) { background: var(--surface); }
   pointer-events: none;
 }
 #hero .container {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-  position: relative; z-index: 1;
+  text-align: center; position: relative; z-index: 1;
 }
+#hero .hero-text { max-width: 900px; margin: 0 auto; }
+#hero .steps-grid { text-align: left; }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 16px; border-radius: 999px;
@@ -681,7 +682,6 @@ footer a { color: var(--primary-light); text-decoration: none; }
   h2 { font-size: 1.5rem; }
   section { padding: 48px 0; }
   #hero { padding: 100px 0 40px; }
-  #hero .container { grid-template-columns: 1fr; gap: 32px; }
   .hero-choice-grid { grid-template-columns: 1fr; max-width: 100%; }
 
   .nav-links { display: none; }

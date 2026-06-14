@@ -125,29 +125,36 @@
   <section id="hero">
     <div class="container">
       <div class="hero-text">
-        <div class="hero-badge"><span class="dot"></span> 免费 · 隐私安全 · 覆盖15+银行</div>
+        <div class="hero-badge"><span class="dot"></span> 免费 · 隐私安全 · 覆盖20+银行</div>
         <h1>让中国没有难办理的贷款</h1>
-        <p class="hero-subtitle">智能匹配银行贷款产品，请选择您的贷款类型开始匹配</p>
+        <p class="hero-subtitle">智能匹配银行贷款产品 — 个人 · 企业全覆盖</p>
         <p class="section-desc" style="margin-top:8px;">
-          不再盲目寻找、不再支付高额中介费。系统根据您的条件智能匹配最适合的银行金融产品，帮您省时、省钱、省心。
+          不再盲目寻找、不再支付高额中介费。简单四步完成智能匹配，帮您省时、省钱、省心。
         </p>
-        <div class="hero-choice-grid">
-          <div class="hero-choice-card" data-target="personal" onclick="goToChecklist('personal')">
-            <span class="choice-icon">👤</span>
-            <span class="choice-title">个人贷款</span>
-            <span class="choice-desc">消费贷 · 房贷 · 车贷 · 公积金贷 · 信用贷</span>
-            <span class="choice-action">查看材料清单 →</span>
+
+        <!-- Four Steps in Hero -->
+        <div class="steps-grid" style="margin-top:32px;">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h4>📋 填写信用信息</h4>
+            <p>选择贷款类型，输入信用评分、收入状况、贷款需求等基本信息。</p>
           </div>
-          <div class="hero-choice-card" data-target="business" onclick="goToChecklist('business')">
-            <span class="choice-icon">🏢</span>
-            <span class="choice-title">企业贷款</span>
-            <span class="choice-desc">经营贷 · 税贷 · 小微贷 · 供应链 · 设备贷</span>
-            <span class="choice-action">查看材料清单 →</span>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h4>📄 上传征信报告</h4>
+            <p>上传个人或企业征信报告PDF，系统自动识别关键字段，无需手动录入。</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h4>🤖 智能算法匹配</h4>
+            <p>多维度加权评分模型，将您的条件与20+银行产品精准比对，秒出结果。</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <h4>✅ 比较并申请</h4>
+            <p>查看每款产品的匹配分数、利率、额度，选择最优产品直通银行官网。</p>
           </div>
         </div>
-        <p style="margin-top:16px;font-size:0.82rem;color:var(--text-muted);text-align:center;">
-          所有数据仅在您的浏览器本地处理，不会上传至任何服务器
-        </p>
       </div>
     </div>
   </section>
@@ -159,32 +166,144 @@
     </div>
   </section>
 
-  <!-- ===== HOW IT WORKS ===== -->
-  <section id="how-it-works">
+  <!-- ===== CHOICE CARDS ===== -->
+  <section id="loan-choice">
     <div class="container">
-      <span class="section-label">How It Works</span>
-      <h2 class="section-title">四步找到最优贷款</h2>
-      <p class="section-desc">从准备材料到成功申请，清晰四步完成智能匹配。</p>
-      <div class="steps-grid steps-grid-4">
-        <div class="step-card">
-          <div class="step-number">1</div>
-          <h4>查看材料清单</h4>
-          <p>根据贷款类型了解需要准备的材料，提前备齐提高审批通过率。</p>
+      <span class="section-label">Get Started</span>
+      <h2 class="section-title">选择您的贷款类型</h2>
+      <p class="section-desc">查看对应的材料清单，提前准备好资料，审批更快通过。</p>
+      <div class="hero-choice-grid" style="max-width:640px;margin:0 auto;">
+        <div class="hero-choice-card" data-target="personal" onclick="goToChecklist('personal')">
+          <span class="choice-icon">👤</span>
+          <span class="choice-title">个人贷款</span>
+          <span class="choice-desc">消费贷 · 房贷 · 车贷 · 公积金贷 · 信用贷</span>
+          <span class="choice-action">查看材料清单 →</span>
         </div>
-        <div class="step-card">
-          <div class="step-number">2</div>
-          <h4>填写信用信息</h4>
-          <p>输入您的信用评分、收入状况、贷款需求等信息，支持上传征信报告PDF自动识别。</p>
+        <div class="hero-choice-card" data-target="business" onclick="goToChecklist('business')">
+          <span class="choice-icon">🏢</span>
+          <span class="choice-title">企业贷款</span>
+          <span class="choice-desc">经营贷 · 税贷 · 小微贷 · 供应链 · 设备贷</span>
+          <span class="choice-action">查看材料清单 →</span>
         </div>
-        <div class="step-card">
-          <div class="step-number">3</div>
-          <h4>智能算法匹配</h4>
-          <p>系统通过多维度加权评分模型，将您的条件与20+银行产品进行精准比对。</p>
+      </div>
+      <p style="margin-top:16px;font-size:0.82rem;color:var(--text-muted);text-align:center;">
+        🔒 所有数据仅在您的浏览器本地处理，不会上传至任何服务器
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== MATERIAL CHECKLIST ===== -->
+  <section id="checklist">
+    <div class="container">
+      <span class="section-label">Checklist</span>
+      <h2 class="section-title">贷款材料清单</h2>
+      <p class="section-desc">提前准备好这些材料，可以大幅提高贷款审批效率和通过率。</p>
+
+      <!-- Tab Switcher -->
+      <div class="checklist-tabs">
+        <button class="checklist-tab active" onclick="switchChecklist('personal')">👤 个人贷款材料</button>
+        <button class="checklist-tab" onclick="switchChecklist('business')">🏢 企业贷款材料</button>
+      </div>
+
+      <!-- Personal Checklist -->
+      <div class="checklist-content" id="checklist-personal">
+        <div class="checklist-group">
+          <h4>🪪 一、身份证明</h4>
+          <ul class="checklist-ul">
+            <li><strong>身份证</strong> — 原件+复印件，有效期内</li>
+            <li><strong>户口本</strong> — 首页+本人页（部分地区需要）</li>
+            <li><strong>结婚证/离婚证</strong> — 已婚或离异需提供</li>
+            <li><strong>居住证明</strong> — 近3个月水电煤账单或房屋租赁合同</li>
+          </ul>
         </div>
-        <div class="step-card">
-          <div class="step-number">4</div>
-          <h4>比较并申请</h4>
-          <p>查看每款产品的匹配分数、利率、额度，选择最适合的产品直接前往银行官方申请。</p>
+        <div class="checklist-group">
+          <h4>💰 二、收入证明</h4>
+          <ul class="checklist-ul">
+            <li><strong>银行流水</strong> — 近6-12个月工资卡流水，银行柜台打印并盖章</li>
+            <li><strong>单位收入证明</strong> — 公司开具+盖公章，注明月收入、职务、入职时间</li>
+            <li><strong>劳动合同</strong> — 复印件，证明雇佣关系</li>
+            <li><strong>个税完税证明</strong> — 个人所得税APP导出或税务局打印</li>
+            <li><strong>社保/公积金缴存记录</strong> — 人社局或公积金中心查询打印</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>📊 三、征信与资产</h4>
+          <ul class="checklist-ul">
+            <li><strong>个人征信报告</strong> — 人民银行征信中心官网下载（简版）或柜台打印（详版）</li>
+            <li><strong>房产证</strong> — 如有，可作为资产证明加分</li>
+            <li><strong>车辆登记证</strong> — 如有，可作为资产证明加分</li>
+            <li><strong>定期存单/理财证明</strong> — 银行或券商出具</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>📎 四、专项贷款补充材料</h4>
+          <ul class="checklist-ul">
+            <li><strong>房贷：</strong>购房合同 + 首付款凭证 + 房屋评估报告</li>
+            <li><strong>车贷：</strong>购车合同 + 首付款收据 + 车辆合格证</li>
+            <li><strong>装修贷：</strong>装修合同 + 房产证（证明所有权）</li>
+            <li><strong>教育贷：</strong>录取通知书或学费单据</li>
+            <li><strong>信用贷：</strong>通常仅需身份证 + 收入证明 + 征信报告</li>
+          </ul>
+        </div>
+        <div style="text-align:center;margin-top:24px;">
+          <button class="btn btn-primary btn-lg" onclick="startMatch('个人')">🔍 开始智能匹配</button>
+        </div>
+      </div>
+
+      <!-- Business Checklist -->
+      <div class="checklist-content" id="checklist-business" style="display:none;">
+        <div class="checklist-group">
+          <h4>📜 一、主体资格</h4>
+          <ul class="checklist-ul">
+            <li><strong>营业执照</strong> — 正副本原件+复印件，已年检</li>
+            <li><strong>开户许可证</strong> — 银行基本户开户证明</li>
+            <li><strong>公司章程</strong> — 工商备案版本</li>
+            <li><strong>股东会/董事会决议</strong> — 同意申请贷款的正式决议文件</li>
+            <li><strong>法定代表人身份证</strong> — 原件+复印件，有效期内</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>📈 二、经营证明</h4>
+          <ul class="checklist-ul">
+            <li><strong>经营场所证明</strong> — 房产证或租赁合同 + 近3个月租金收据</li>
+            <li><strong>经营流水</strong> — 近12个月对公账户银行流水 + 个人经营账户流水</li>
+            <li><strong>购销合同</strong> — 上下游合同（采购+销售），证明业务真实性</li>
+            <li><strong>纳税证明</strong> — 近2年完税证明 + 纳税评级证书</li>
+            <li><strong>增值税发票汇总</strong> — 近6-12个月开票记录</li>
+            <li><strong>水电费单据</strong> — 近3个月（证明实际经营状态）</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>📊 三、财务报表</h4>
+          <ul class="checklist-ul">
+            <li><strong>审计报告</strong> — 近2-3年，会计师事务所出具</li>
+            <li><strong>财务报表</strong> — 资产负债表 + 利润表 + 现金流量表（近2年）</li>
+            <li><strong>科目明细</strong> — 应收账款、存货、固定资产等（近6个月）</li>
+            <li><strong>纳税申报表</strong> — 增值税 + 所得税申报表</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>🏭 四、资产与担保</h4>
+          <ul class="checklist-ul">
+            <li><strong>企业名下房产/土地证</strong> — 厂房、办公楼、商铺、工业用地</li>
+            <li><strong>设备清单及发票</strong> — 生产设备、运输车辆等固定资产</li>
+            <li><strong>法人/股东个人房产</strong> — 用于抵押增信</li>
+            <li><strong>第三方担保函</strong> — 担保公司或其他企业的担保承诺</li>
+            <li><strong>存单/理财质押</strong> — 定期存单、国债等可质押资产</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>🔖 五、特定贷款补充材料</h4>
+          <ul class="checklist-ul">
+            <li><strong>税贷：</strong>近2年纳税记录 + 纳税评级证书</li>
+            <li><strong>发票贷：</strong>近12个月增值税开票数据</li>
+            <li><strong>供应链金融：</strong>核心企业合作协议 + 应收账款确权文件</li>
+            <li><strong>项目贷款：</strong>项目可行性报告 + 政府批文 + 环评报告</li>
+            <li><strong>科技贷：</strong>高新技术企业证书 + 专利证书 + 研发投入证明</li>
+          </ul>
+        </div>
+        <div style="text-align:center;margin-top:24px;">
+          <button class="btn btn-primary btn-lg" onclick="startMatch('企业')">🔍 开始智能匹配</button>
         </div>
       </div>
     </div>
@@ -194,8 +313,8 @@
   <section id="match-section">
     <div class="container">
       <span class="section-label">Smart Match</span>
-      <h2 class="section-title">智能匹配</h2>
-      <p class="section-desc">填写以下信息，系统将为您精准匹配贷款产品。</p>
+      <h2 class="section-title">信用分智能匹配</h2>
+      <p class="section-desc">填写以下信息，系统将为您精准匹配最合适的贷款产品。</p>
 
       <!-- Step Indicator -->
       <div class="step-indicator" id="step-indicator"></div>
