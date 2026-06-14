@@ -78,13 +78,17 @@ const Matcher = (function() {
     }
 
     // --- 2. 收入匹配 (20%) ---
+    // 企业用户用年营业额折算月均收入，个人用户直接用月收入
+    const userMonthlyIncome = user.loanTarget === '企业'
+      ? (user.annualRevenue || 0) * 10000 / 12
+      : (user.monthlyIncome || 0);
     const estimatedMonthly = calcMonthlyPayment(user.loanAmount, product.interestRate, user.loanTerm);
     const requiredIncome = estimatedMonthly / product.maxDTI;
-    if (user.monthlyIncome >= requiredIncome) {
-      const ratio = Math.min(1, user.monthlyIncome / requiredIncome);
+    if (userMonthlyIncome >= requiredIncome) {
+      const ratio = Math.min(1, userMonthlyIncome / requiredIncome);
       scoreIncome = 70 + ratio * 30;
     } else {
-      scoreIncome = Math.max(0, (user.monthlyIncome / requiredIncome) * 70);
+      scoreIncome = Math.max(0, (userMonthlyIncome / requiredIncome) * 70);
     }
 
     // --- 3. 就业类型匹配 (15%) ---
@@ -118,8 +122,8 @@ const Matcher = (function() {
 
     // --- 6. 负债率检查 (10%) ---
     const projectedPayment = calcMonthlyPayment(user.loanAmount, product.interestRate, user.loanTerm);
-    const totalDebt = user.existingDebtMonthly + projectedPayment;
-    const dti = user.monthlyIncome > 0 ? totalDebt / user.monthlyIncome : 1;
+    const totalDebt = (user.existingDebtMonthly || 0) + projectedPayment;
+    const dti = userMonthlyIncome > 0 ? totalDebt / userMonthlyIncome : 1;
     if (dti <= product.maxDTI) {
       scoreDebt = 100;
     } else {

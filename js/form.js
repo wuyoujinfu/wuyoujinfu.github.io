@@ -19,6 +19,7 @@ const LoanForm = (function() {
   // --- 默认表单数据 ---
   const DEFAULT_DATA = {
     loanTarget: '个人',
+    // 个人字段
     creditScore: 650,
     monthlyIncome: 15000,
     employmentType: '受薪雇员',
@@ -32,7 +33,20 @@ const LoanForm = (function() {
     loanTerm: 12,
     creditHistoryMonths: 24,
     recentInquiries: 0,
-    hasDelinquency: false
+    hasDelinquency: false,
+    // 企业字段
+    annualRevenue: 100,
+    yearsInBusiness: 3,
+    taxRating: 'B',
+    hasBusinessProperty: false
+  };
+
+  // --- 企业默认值 ---
+  const BUSINESS_DEFAULTS = {
+    employmentType: '自雇人士',
+    loanPurpose: '经营周转',
+    loanAmount: 500000,
+    loanTerm: 12
   };
 
   // --- 贷款对象用途映射 ---
@@ -91,6 +105,23 @@ const LoanForm = (function() {
     return CREDIT_LEVELS[0];
   }
 
+  // --- 设置贷款对象 ---
+  function setTarget(target) {
+    if (target === '企业') {
+      formData.loanTarget = '企业';
+      Object.assign(formData, BUSINESS_DEFAULTS);
+    } else {
+      formData.loanTarget = '个人';
+      formData.employmentType = DEFAULT_DATA.employmentType;
+      formData.loanPurpose = DEFAULT_DATA.loanPurpose;
+    }
+    currentStep = 1;
+    saveData();
+    renderSteps();
+    renderStep(currentStep);
+    updateNavigation();
+  }
+
   // --- 初始化 ---
   function init() {
     // 从 localStorage 恢复数据
@@ -140,24 +171,19 @@ const LoanForm = (function() {
   // --- Step 1: 基本信息 ---
   function renderBasicInfo(container) {
     const level = getCreditLevel(formData.creditScore);
+    const isBusiness = formData.loanTarget === '企业';
+    // 企业专用的就业类型
+    const businessEmployTypes = [
+      { value: '自雇人士', label: '自雇人士（个体户/法人）', desc: '个体工商户、企业法人' },
+      { value: '企业合伙人', label: '企业合伙人', desc: '公司合伙人、股东' }
+    ];
+    const employOptions = isBusiness ? businessEmployTypes : EMPLOYMENT_TYPES;
+
     container.innerHTML = `
-      <!-- 贷款对象选择 -->
-      <div class="form-group">
-        <label class="form-label">贷款对象</label>
-        <div class="target-type-grid">
-          <div class="target-card ${formData.loanTarget === '个人' ? 'selected' : ''}"
-               data-target="个人" onclick="LoanForm.selectTarget(this)">
-            <span class="target-icon">👤</span>
-            <span class="target-label">个人贷款</span>
-            <span class="target-desc">消费贷·房贷·车贷·公积金贷</span>
-          </div>
-          <div class="target-card ${formData.loanTarget === '企业' ? 'selected' : ''}"
-               data-target="企业" onclick="LoanForm.selectTarget(this)">
-            <span class="target-icon">🏢</span>
-            <span class="target-label">企业贷款</span>
-            <span class="target-desc">经营贷·税贷·小微贷·供应链</span>
-          </div>
-        </div>
+      <!-- 当前通道标识 -->
+      <div class="channel-badge ${isBusiness ? 'channel-business' : 'channel-personal'}">
+        ${isBusiness ? '🏢 企业贷款通道' : '👤 个人贷款通道'}
+        <span style="font-weight:400;margin-left:8px;opacity:0.8;">（可在首页重新选择）</span>
       </div>
 
       <div class="form-group">
@@ -177,6 +203,37 @@ const LoanForm = (function() {
         <p class="form-hint">${level.desc}</p>
       </div>
 
+      ${isBusiness ? `
+      <!-- 企业专用字段 -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">年营业额（万元）</label>
+          <input type="number" class="form-input" value="${formData.annualRevenue}"
+                 data-field="annualRevenue" onchange="LoanForm.updateField(this)"
+                 placeholder="企业年营业额" min="0" step="10">
+        </div>
+        <div class="form-group">
+          <label class="form-label">经营年限</label>
+          <select class="form-select" data-field="yearsInBusiness" onchange="LoanForm.updateField(this)">
+            <option value="1" ${formData.yearsInBusiness === 1 ? 'selected' : ''}>不满1年</option>
+            <option value="2" ${formData.yearsInBusiness === 2 ? 'selected' : ''}>1-2年</option>
+            <option value="3" ${formData.yearsInBusiness === 3 ? 'selected' : ''}>2-3年</option>
+            <option value="5" ${formData.yearsInBusiness >= 5 ? 'selected' : ''}>3-5年</option>
+            <option value="10" ${formData.yearsInBusiness >= 10 ? 'selected' : ''}>5年以上</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">纳税评级</label>
+        <select class="form-select" data-field="taxRating" onchange="LoanForm.updateField(this)">
+          <option value="A" ${formData.taxRating === 'A' ? 'selected' : ''}>A 级（优秀）</option>
+          <option value="B" ${formData.taxRating === 'B' ? 'selected' : ''}>B 级（良好）</option>
+          <option value="C" ${formData.taxRating === 'C' ? 'selected' : ''}>C 级（一般）</option>
+          <option value="无" ${formData.taxRating === '无' ? 'selected' : ''}>暂无评级</option>
+        </select>
+      </div>
+      ` : `
+      <!-- 个人专用字段 -->
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">月收入（元）</label>
@@ -191,10 +248,11 @@ const LoanForm = (function() {
           </select>
         </div>
       </div>
+      `}
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">信用历史（月）</label>
+          <label class="form-label">${isBusiness ? '企业信用历史（月）' : '信用历史（月）'}</label>
           <input type="number" class="form-input" value="${formData.creditHistoryMonths}"
                  data-field="creditHistoryMonths" onchange="LoanForm.updateField(this)" min="0" placeholder="使用信贷的月数">
         </div>
@@ -208,14 +266,19 @@ const LoanForm = (function() {
       <div class="form-checkbox">
         <input type="checkbox" id="hasDelinquency" ${formData.hasDelinquency ? 'checked' : ''}
                onchange="LoanForm.updateCheckbox(this)" data-field="hasDelinquency">
-        <label for="hasDelinquency">征信有逾期记录</label>
+        <label for="hasDelinquency">${isBusiness ? '企业/个人征信有逾期记录' : '征信有逾期记录'}</label>
       </div>
     `;
   }
 
   // --- Step 2: 资产与负债 ---
   function renderAssets(container) {
-    const checks = [
+    const isBusiness = formData.loanTarget === '企业';
+    const checks = isBusiness ? [
+      { key: 'hasProperty',       label: '企业房产', icon: '🏭' },
+      { key: 'hasCar',            label: '企业车辆', icon: '🚛' },
+      { key: 'hasBusinessProperty', label: '经营场所', icon: '🏢' },
+    ] : [
       { key: 'hasSocialSecurity', label: '缴纳社保', icon: '🏦' },
       { key: 'hasHousingFund',    label: '缴纳公积金', icon: '🏡' },
       { key: 'hasProperty',       label: '名下房产', icon: '🏠' },
@@ -223,7 +286,7 @@ const LoanForm = (function() {
     ];
 
     container.innerHTML = `
-      <div class="asset-cards">
+      <div class="asset-cards ${isBusiness ? 'asset-cards-3' : ''}">
         ${checks.map(c => `
           <div class="asset-card ${formData[c.key] ? 'selected' : ''}"
                data-field="${c.key}" onclick="LoanForm.toggleAsset(this)">
@@ -236,12 +299,12 @@ const LoanForm = (function() {
 
       <div class="form-group" style="margin-top:24px;">
         <label class="form-label">
-          现有月负债（元）
-          <span class="form-tooltip" title="包括房贷月供、车贷月供、信用卡最低还款等">ⓘ</span>
+          ${isBusiness ? '现有月负债（元，含经营贷月供）' : '现有月负债（元）'}
+          <span class="form-tooltip" title="${isBusiness ? '包括经营贷款月供、信用卡还款等' : '包括房贷月供、车贷月供、信用卡最低还款等'}">ⓘ</span>
         </label>
         <input type="number" class="form-input" value="${formData.existingDebtMonthly}"
                data-field="existingDebtMonthly" onchange="LoanForm.updateField(this)" min="0" step="100" placeholder="当前每月需还的其他贷款">
-        <p class="form-hint">银行会综合评估您的总负债与收入比（DTI）</p>
+        <p class="form-hint">${isBusiness ? '银行会综合评估企业经营负债与收入比' : '银行会综合评估您的总负债与收入比（DTI）'}</p>
       </div>
     `;
   }
@@ -296,9 +359,44 @@ const LoanForm = (function() {
   // --- Step 4: 确认信息 ---
   function renderReview(container) {
     const level = getCreditLevel(formData.creditScore);
-    const employLabel = EMPLOYMENT_TYPES.find(t => t.value === formData.employmentType)?.label || formData.employmentType;
+    const isBusiness = formData.loanTarget === '企业';
+    const employLabel = (isBusiness
+      ? (formData.employmentType === '自雇人士' ? '自雇人士（个体户/法人）' : '企业合伙人')
+      : EMPLOYMENT_TYPES.find(t => t.value === formData.employmentType)?.label) || formData.employmentType;
     const purposes = getPurposesForTarget(formData.loanTarget);
     const purposeLabel = purposes.find(p => p.value === formData.loanPurpose)?.label || formData.loanPurpose;
+
+    const businessReview = isBusiness ? `
+      <div class="review-item">
+        <span class="review-label">年营业额</span>
+        <span class="review-value">¥${Number(formData.annualRevenue).toLocaleString()}万</span>
+      </div>
+      <div class="review-item">
+        <span class="review-label">经营年限</span>
+        <span class="review-value">${formData.yearsInBusiness >= 5 ? '5年以上' : formData.yearsInBusiness + '年'}</span>
+      </div>
+      <div class="review-item">
+        <span class="review-label">纳税评级</span>
+        <span class="review-value">${formData.taxRating} 级</span>
+      </div>
+      <div class="review-item">
+        <span class="review-label">企业资产</span>
+        <span class="review-value">${formData.hasProperty ? '有房产' : '无房产'} · ${formData.hasCar ? '有车辆' : '无车辆'} · ${formData.hasBusinessProperty ? '有经营场所' : '无经营场所'}</span>
+      </div>
+    ` : `
+      <div class="review-item">
+        <span class="review-label">月收入</span>
+        <span class="review-value">¥${Number(formData.monthlyIncome).toLocaleString()}</span>
+      </div>
+      <div class="review-item">
+        <span class="review-label">社保/公积金</span>
+        <span class="review-value">${formData.hasSocialSecurity ? '有社保' : '无社保'} · ${formData.hasHousingFund ? '有公积金' : '无公积金'}</span>
+      </div>
+      <div class="review-item">
+        <span class="review-label">资产</span>
+        <span class="review-value">${formData.hasProperty ? '有房' : '无房'} · ${formData.hasCar ? '有车' : '无车'}</span>
+      </div>
+    `;
 
     container.innerHTML = `
       <div class="review-card">
@@ -306,27 +404,16 @@ const LoanForm = (function() {
         <div class="review-grid">
           <div class="review-item">
             <span class="review-label">贷款对象</span>
-            <span class="review-value">${formData.loanTarget === '企业' ? '🏢 企业贷款' : '👤 个人贷款'}</span>
+            <span class="review-value">${isBusiness ? '🏢 企业贷款' : '👤 个人贷款'}</span>
           </div>
           <div class="review-item">
             <span class="review-label">信用评分</span>
             <span class="review-value" style="color:${level.color}">${formData.creditScore}（${level.label}）</span>
           </div>
-          <div class="review-item">
-            <span class="review-label">月收入</span>
-            <span class="review-value">¥${Number(formData.monthlyIncome).toLocaleString()}</span>
-          </div>
+          ${businessReview}
           <div class="review-item">
             <span class="review-label">就业类型</span>
             <span class="review-value">${employLabel}</span>
-          </div>
-          <div class="review-item">
-            <span class="review-label">社保/公积金</span>
-            <span class="review-value">${formData.hasSocialSecurity ? '有社保' : '无社保'} · ${formData.hasHousingFund ? '有公积金' : '无公积金'}</span>
-          </div>
-          <div class="review-item">
-            <span class="review-label">资产</span>
-            <span class="review-value">${formData.hasProperty ? '有房' : '无房'} · ${formData.hasCar ? '有车' : '无车'}</span>
           </div>
           <div class="review-item">
             <span class="review-label">现有月负债</span>
@@ -494,11 +581,11 @@ const LoanForm = (function() {
   // --- 导出公共 API ---
   return {
     STEPS, EMPLOYMENT_TYPES, CREDIT_LEVELS, PURPOSES_BY_TARGET,
-    init, getData, prefill, reset,
+    init, getData, prefill, reset, setTarget,
     nextStep, prevStep, goToStep,
     updateField, updateRange, updateCheckbox, toggleAsset, selectTarget, selectPurpose,
     submitMatch, getCreditLevel, getPurposesForTarget,
-    DEFAULT_DATA
+    DEFAULT_DATA, BUSINESS_DEFAULTS
   };
 
 })();

@@ -16,23 +16,23 @@
 <link rel="stylesheet" href="css/style.css">
 
 <!-- ===== SEO ===== -->
-<title>无游金服 — 让中国没有难贷的款 | 智能匹配银行贷款产品</title>
-<meta name="description" content="让中国没有难贷的款。根据您的信用状况和贷款需求，免费智能匹配最适合的银行金融产品。覆盖个人贷款和企业贷款，15+主流银行任您选，不再花冤枉中介费。">
+<title>无游金服 — 让中国没有难办理的贷款 | 智能匹配银行贷款产品</title>
+<meta name="description" content="让中国没有难办理的贷款。根据您的信用状况和贷款需求，免费智能匹配最适合的银行金融产品。覆盖个人贷款和企业贷款，15+主流银行任您选，不再花冤枉中介费。">
 <meta name="keywords" content="贷款产品匹配,信用贷款对比,银行贷款利率,个人信用贷款推荐,征信报告贷款,哪个银行贷款好批,信用贷款条件,无抵押贷款">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://wuyoujinfu.github.io/">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="无游金服 — 让中国没有难贷的款">
-<meta property="og:description" content="免费智能匹配银行贷款产品，覆盖个人贷款和企业贷款，让中国没有难贷的款。">
+<meta property="og:title" content="无游金服 — 让中国没有难办理的贷款">
+<meta property="og:description" content="免费智能匹配银行贷款产品，覆盖个人贷款和企业贷款，让中国没有难办理的贷款。">
 <meta property="og:url" content="https://wuyoujinfu.github.io/">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wuyoujinfu.github.io/favicon.svg">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="无游金服 — 让中国没有难贷的款">
+<meta name="twitter:title" content="无游金服 — 让中国没有难办理的贷款">
 <meta name="twitter:description" content="免费智能匹配银行贷款产品，个人贷款和企业贷款全覆盖。">
 
 <!-- Structured Data -->
@@ -41,7 +41,7 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "无游金服",
-  "description": "让中国没有难贷的款 — 智能匹配银行贷款产品的免费工具",
+  "description": "让中国没有难办理的贷款 — 智能匹配银行贷款产品的免费工具",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Web",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
@@ -125,36 +125,28 @@
     <div class="container">
       <div class="hero-text">
         <div class="hero-badge"><span class="dot"></span> 免费 · 隐私安全 · 覆盖15+银行</div>
-        <h1>让中国没有难贷的款</h1>
-        <p class="hero-subtitle">找到最适合您的贷款产品 — 个人 · 企业全覆盖</p>
+        <h1>让中国没有难办理的贷款</h1>
+        <p class="hero-subtitle">智能匹配银行贷款产品，请选择您的贷款类型开始匹配</p>
         <p class="section-desc" style="margin-top:8px;">
-          不再盲目寻找、不再支付高额中介费。填写您的信用信息，系统智能匹配最适合的银行金融产品，帮您省时、省钱、省心。
+          不再盲目寻找、不再支付高额中介费。系统根据您的条件智能匹配最适合的银行金融产品，帮您省时、省钱、省心。
         </p>
-        <div class="hero-actions">
-          <button class="btn btn-primary btn-lg" data-scroll-to="match">🔍 免费智能匹配</button>
-          <a href="#how-it-works" class="btn btn-outline btn-lg">了解更多 →</a>
-        </div>
-      </div>
-      <div class="hero-visual">
-        <div class="hero-card">
-          <div class="hc-header">
-            <div class="hc-bank-icon">🏦</div>
-            <div>
-              <div style="font-size:0.85rem;color:var(--text-muted);">今日推荐产品</div>
-              <div style="font-weight:700;">工商银行 · 融e借</div>
-            </div>
+        <div class="hero-choice-grid">
+          <div class="hero-choice-card" data-target="个人" onclick="App.selectLoanTarget('个人')">
+            <span class="choice-icon">👤</span>
+            <span class="choice-title">个人贷款</span>
+            <span class="choice-desc">消费贷 · 房贷 · 车贷 · 公积金贷 · 信用贷</span>
+            <span class="choice-action">开始匹配 →</span>
           </div>
-          <div>
-            <span class="hc-rate">3.25%</span>
-            <span style="font-size:0.85rem;color:var(--text-muted);"> 年化利率</span>
-          </div>
-          <div class="hc-features">
-            <div class="hc-feat"><span class="check">✓</span> 最高额度 80万元</div>
-            <div class="hc-feat"><span class="check">✓</span> 纯信用，无抵押</div>
-            <div class="hc-feat"><span class="check">✓</span> 最快1分钟到账</div>
-            <div class="hc-feat"><span class="check">✓</span> 随借随还，循环额度</div>
+          <div class="hero-choice-card" data-target="企业" onclick="App.selectLoanTarget('企业')">
+            <span class="choice-icon">🏢</span>
+            <span class="choice-title">企业贷款</span>
+            <span class="choice-desc">经营贷 · 税贷 · 小微贷 · 供应链 · 设备贷</span>
+            <span class="choice-action">开始匹配 →</span>
           </div>
         </div>
+        <p style="margin-top:16px;font-size:0.82rem;color:var(--text-muted);text-align:center;">
+          所有数据仅在您的浏览器本地处理，不会上传至任何服务器
+        </p>
       </div>
     </div>
   </section>
@@ -356,7 +348,7 @@
     <p style="margin:6px 0 0;">💬 如需帮助，请通过 GitHub Issues 联系</p>
   </div>
   <p style="margin-top:14px;font-size:0.76rem;">
-    © 2026 无游金服 · 让中国没有难贷的款
+    © 2026 无游金服 · 让中国没有难办理的贷款
   </p>
 </footer>
 

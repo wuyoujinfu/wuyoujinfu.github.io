@@ -203,17 +203,33 @@ const App = (function() {
     }
   }
 
+  // --- 贷款通道选择 ---
+  function selectLoanTarget(target) {
+    // 高亮所选卡片
+    document.querySelectorAll('.hero-choice-card').forEach(c => {
+      c.classList.toggle('selected', c.dataset.target === target);
+    });
+    // 设置表单贷款对象
+    LoanForm.setTarget(target);
+    // 滚动到匹配区域
+    setTimeout(() => {
+      document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+  }
+
   // --- 重置 ---
   function resetAll() {
     LoanForm.reset();
     const resultsSection = document.getElementById('results-section');
     if (resultsSection) resultsSection.style.display = 'none';
+    // 清除 hero 卡片高亮
+    document.querySelectorAll('.hero-choice-card').forEach(c => c.classList.remove('selected'));
     document.getElementById('match-section').scrollIntoView({ behavior: 'smooth' });
   }
 
   // --- 导出 ---
   return {
-    init, runMatching, resetAll,
+    init, runMatching, resetAll, selectLoanTarget,
     getProducts: () => products,
     isReady: () => isReady
   };
