@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /js/
-Disallow: /data/
 
-Sitemap: https://j98pbrbgmw-wq.github.io/you/sitemap.xml
+Sitemap: https://wuyoujinfu.github.io/sitemap.xml
