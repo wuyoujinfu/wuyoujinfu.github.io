@@ -353,6 +353,22 @@ section:nth-child(even) { background: var(--surface); }
   font-size: 0.82rem; font-weight: 600;
 }
 
+/* Loan Type Toggle in Form */
+.form-loan-type-toggle { display: flex; gap: 0; border-radius: var(--radius); overflow: hidden; border: 2px solid var(--border); }
+.loan-type-btn {
+  flex: 1; padding: 14px 20px; border: none; background: var(--surface);
+  font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  font-family: var(--font); transition: all var(--transition);
+  color: var(--text-secondary);
+}
+.loan-type-btn:hover { background: var(--bg); }
+.loan-type-btn.active { background: var(--primary); color: #fff; }
+.loan-type-btn:first-child { border-right: 1px solid var(--border); }
+
+/* Credit Score Readonly */
+.credit-score-readonly .credit-score-value { font-size: 2rem; }
+.credit-score-readonly .credit-score-badge { font-size: 0.8rem; }
+
 /* Target Type Selection */
 .target-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .target-card {

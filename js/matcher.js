@@ -68,12 +68,17 @@ const Matcher = (function() {
     const disqualifiers = [];
 
     // --- 1. 信用评分匹配 (25%) ---
-    if (user.creditScore >= product.minCreditScore) {
+    const effectiveScore = user.creditScore || 0;
+    if (effectiveScore <= 0) {
+      // 未上传征信报告，信用分中性处理
+      scoreCredit = 50;
+      disqualifiers.push('未检测到信用评分，建议上传征信报告获取更精准匹配');
+    } else if (effectiveScore >= product.minCreditScore) {
       const range = product.prefCreditScore - product.minCreditScore || 1;
-      const ratio = Math.min(1, (user.creditScore - product.minCreditScore) / range);
-      scoreCredit = 60 + ratio * 40; // 60-100
+      const ratio = Math.min(1, (effectiveScore - product.minCreditScore) / range);
+      scoreCredit = 60 + ratio * 40;
     } else {
-      scoreCredit = Math.max(0, (user.creditScore / product.minCreditScore) * 40);
+      scoreCredit = Math.max(0, (effectiveScore / product.minCreditScore) * 40);
       disqualifiers.push('信用评分低于产品最低要求（' + product.minCreditScore + '分）');
     }
 

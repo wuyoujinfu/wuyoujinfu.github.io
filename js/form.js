@@ -20,7 +20,7 @@ const LoanForm = (function() {
   const DEFAULT_DATA = {
     loanTarget: '个人',
     // 个人字段
-    creditScore: 650,
+    creditScore: 0,
     monthlyIncome: 15000,
     employmentType: '受薪雇员',
     hasSocialSecurity: true,
@@ -99,10 +99,27 @@ const LoanForm = (function() {
   ];
 
   function getCreditLevel(score) {
+    if (!score || score <= 0) return { min: 0, max: 0, label: '待评估', color: '#94a3b8', desc: '上传征信报告后自动生成信用评分' };
     for (let level of CREDIT_LEVELS) {
       if (score >= level.min && score <= level.max) return level;
     }
     return CREDIT_LEVELS[0];
+  }
+
+  // --- 表单内切换贷款类型 ---
+  function switchLoanType(target) {
+    if (formData.loanTarget === target) return;
+    if (target === '企业') {
+      formData.loanTarget = '企业';
+      Object.assign(formData, BUSINESS_DEFAULTS);
+    } else {
+      formData.loanTarget = '个人';
+      formData.employmentType = DEFAULT_DATA.employmentType;
+      formData.loanPurpose = DEFAULT_DATA.loanPurpose;
+    }
+    saveData();
+    renderStep(currentStep);
+    renderSteps();
   }
 
   // --- 设置贷款对象 ---
@@ -180,27 +197,34 @@ const LoanForm = (function() {
     const employOptions = isBusiness ? businessEmployTypes : EMPLOYMENT_TYPES;
 
     container.innerHTML = `
+      <!-- 贷款类型选择 -->
+      <div class="form-group">
+        <label class="form-label">我要办理</label>
+        <div class="form-loan-type-toggle">
+          <button class="loan-type-btn ${!isBusiness ? 'active' : ''}" onclick="LoanForm.switchLoanType('个人')">
+            👤 个人贷款
+          </button>
+          <button class="loan-type-btn ${isBusiness ? 'active' : ''}" onclick="LoanForm.switchLoanType('企业')">
+            🏢 企业贷款
+          </button>
+        </div>
+      </div>
+
       <!-- 当前通道标识 -->
       <div class="channel-badge ${isBusiness ? 'channel-business' : 'channel-personal'}">
-        ${isBusiness ? '🏢 企业贷款通道' : '👤 个人贷款通道'}
-        <span style="font-weight:400;margin-left:8px;opacity:0.8;">（可在首页重新选择）</span>
+        ${isBusiness ? '🏢 当前：企业贷款资料填报' : '👤 当前：个人贷款资料填报'}
       </div>
 
       <div class="form-group">
         <label class="form-label">
           信用评分
-          <span class="form-tooltip" title="根据征信报告综合评估的信用分数，范围300-900分">ⓘ</span>
+          <span class="form-tooltip" title="上传征信报告后由系统自动解析生成，无需手动填写">ⓘ</span>
         </label>
-        <div class="credit-score-display">
-          <span class="credit-score-value" style="color:${level.color}">${formData.creditScore}</span>
-          <span class="credit-score-badge" style="background:${level.color}15;color:${level.color}">${level.label}</span>
+        <div class="credit-score-display credit-score-readonly">
+          <span class="credit-score-value" style="color:var(--text-muted)">${formData.creditScore > 0 ? formData.creditScore : '--'}</span>
+          <span class="credit-score-badge" style="background:var(--bg);color:var(--text-muted)">${formData.creditScore > 0 ? level.label : '待评估'}</span>
         </div>
-        <input type="range" class="form-range" min="300" max="900" step="10" value="${formData.creditScore}"
-               data-field="creditScore" oninput="LoanForm.updateRange(this)">
-        <div class="range-labels">
-          ${CREDIT_LEVELS.map(l => `<span style="color:${l.color}">${l.label}<br>${l.min}</span>`).join('')}
-        </div>
-        <p class="form-hint">${level.desc}</p>
+        <p class="form-hint" style="color:var(--text-muted);">📄 上传征信报告后由系统自动解析并生成信用评分</p>
       </div>
 
       ${isBusiness ? `
@@ -589,7 +613,7 @@ const LoanForm = (function() {
   // --- 导出公共 API ---
   return {
     STEPS, EMPLOYMENT_TYPES, CREDIT_LEVELS, PURPOSES_BY_TARGET,
-    init, getData, prefill, reset, setTarget,
+    init, getData, prefill, reset, setTarget, switchLoanType,
     nextStep, prevStep, goToStep,
     updateField, updateRange, updateCheckbox, toggleAsset, selectTarget, selectPurpose,
     submitMatch, getCreditLevel, getPurposesForTarget,
