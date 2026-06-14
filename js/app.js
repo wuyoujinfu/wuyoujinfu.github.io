@@ -203,38 +203,57 @@ const App = (function() {
     }
   }
 
-  // --- 贷款通道选择 ---
-  function selectLoanTarget(target) {
-    // 高亮所选卡片
-    document.querySelectorAll('.hero-choice-card').forEach(c => {
-      c.classList.toggle('selected', c.dataset.target === target);
-    });
-    // 设置表单贷款对象
-    LoanForm.setTarget(target);
-    // 滚动到匹配区域
-    setTimeout(() => {
-      document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 150);
-  }
-
-  // --- 重置 ---
-  function resetAll() {
-    LoanForm.reset();
-    const resultsSection = document.getElementById('results-section');
-    if (resultsSection) resultsSection.style.display = 'none';
-    // 清除 hero 卡片高亮
-    document.querySelectorAll('.hero-choice-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById('match-section').scrollIntoView({ behavior: 'smooth' });
-  }
+  // --- 跳转到材料清单 ---
+  App.goToChecklist = goToChecklist;
+  App.startMatch = startMatch;
 
   // --- 导出 ---
   return {
-    init, runMatching, resetAll, selectLoanTarget,
+    init, runMatching, resetAll, goToChecklist, startMatch,
     getProducts: () => products,
     isReady: () => isReady
   };
 
 })();
+
+// --- 全局导航函数 ---
+function goToChecklist(type) {
+  // 高亮 Hero 对应卡片
+  document.querySelectorAll('.hero-choice-card').forEach(function(c) {
+    c.classList.toggle('selected', c.dataset.target === type);
+  });
+  // 切换到对应 tab
+  switchChecklist(type);
+  // 滚动到清单区
+  setTimeout(function() {
+    document.getElementById('checklist').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function startMatch(target) {
+  // 设置表单贷款对象
+  if (typeof LoanForm !== 'undefined') LoanForm.setTarget(target);
+  // 滚动到匹配区
+  setTimeout(function() {
+    document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
+}
+
+function switchChecklist(type) {
+  var tabs = document.querySelectorAll('.checklist-tab');
+  var contents = document.querySelectorAll('.checklist-content');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  contents.forEach(function(c) { c.style.display = 'none'; });
+  if (type === 'business') {
+    tabs[1] && tabs[1].classList.add('active');
+    var biz = document.getElementById('checklist-business');
+    if (biz) biz.style.display = 'block';
+  } else {
+    tabs[0] && tabs[0].classList.add('active');
+    var per = document.getElementById('checklist-personal');
+    if (per) per.style.display = 'block';
+  }
+}
 
 // --- 页面加载完成后初始化 ---
 document.addEventListener('DOMContentLoaded', function() {

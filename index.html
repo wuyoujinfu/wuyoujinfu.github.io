@@ -132,17 +132,17 @@
           不再盲目寻找、不再支付高额中介费。系统根据您的条件智能匹配最适合的银行金融产品，帮您省时、省钱、省心。
         </p>
         <div class="hero-choice-grid">
-          <div class="hero-choice-card" data-target="个人" onclick="App.selectLoanTarget('个人')">
+          <div class="hero-choice-card" data-target="personal" onclick="goToChecklist('personal')">
             <span class="choice-icon">👤</span>
             <span class="choice-title">个人贷款</span>
             <span class="choice-desc">消费贷 · 房贷 · 车贷 · 公积金贷 · 信用贷</span>
-            <span class="choice-action">开始匹配 →</span>
+            <span class="choice-action">查看材料清单 →</span>
           </div>
-          <div class="hero-choice-card" data-target="企业" onclick="App.selectLoanTarget('企业')">
+          <div class="hero-choice-card" data-target="business" onclick="goToChecklist('business')">
             <span class="choice-icon">🏢</span>
             <span class="choice-title">企业贷款</span>
             <span class="choice-desc">经营贷 · 税贷 · 小微贷 · 供应链 · 设备贷</span>
-            <span class="choice-action">开始匹配 →</span>
+            <span class="choice-action">查看材料清单 →</span>
           </div>
         </div>
         <p style="margin-top:16px;font-size:0.82rem;color:var(--text-muted);text-align:center;">
@@ -163,21 +163,26 @@
   <section id="how-it-works">
     <div class="container">
       <span class="section-label">How It Works</span>
-      <h2 class="section-title">三步找到最优贷款</h2>
-      <p class="section-desc">无需金融专业知识，简单三步完成智能匹配。</p>
-      <div class="steps-grid">
+      <h2 class="section-title">四步找到最优贷款</h2>
+      <p class="section-desc">从准备材料到成功申请，清晰四步完成智能匹配。</p>
+      <div class="steps-grid steps-grid-4">
         <div class="step-card">
           <div class="step-number">1</div>
-          <h4>填写信用信息</h4>
-          <p>输入您的信用状况、收入水平、贷款需求等基本信息，也支持上传征信报告PDF自动识别填写。</p>
+          <h4>查看材料清单</h4>
+          <p>根据贷款类型了解需要准备的材料，提前备齐提高审批通过率。</p>
         </div>
         <div class="step-card">
           <div class="step-number">2</div>
-          <h4>智能算法匹配</h4>
-          <p>系统通过多维度加权评分模型，将您的条件与15+银行产品进行精准比对。</p>
+          <h4>填写信用信息</h4>
+          <p>输入您的信用评分、收入状况、贷款需求等信息，支持上传征信报告PDF自动识别。</p>
         </div>
         <div class="step-card">
           <div class="step-number">3</div>
+          <h4>智能算法匹配</h4>
+          <p>系统通过多维度加权评分模型，将您的条件与20+银行产品进行精准比对。</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
           <h4>比较并申请</h4>
           <p>查看每款产品的匹配分数、利率、额度，选择最适合的产品直接前往银行官方申请。</p>
         </div>
@@ -342,6 +347,9 @@
             <li><strong>信用贷：</strong>通常仅需身份证 + 收入证明 + 征信报告</li>
           </ul>
         </div>
+        <div style="text-align:center;margin-top:24px;">
+          <button class="btn btn-primary btn-lg" onclick="startMatch('个人')">🔍 开始智能匹配</button>
+        </div>
       </div>
 
       <!-- Business Checklist -->
@@ -395,6 +403,9 @@
             <li><strong>项目贷款：</strong>项目可行性报告 + 政府批文 + 环评报告</li>
             <li><strong>科技贷：</strong>高新技术企业证书 + 专利证书 + 研发投入证明</li>
           </ul>
+        </div>
+        <div style="text-align:center;margin-top:24px;">
+          <button class="btn btn-primary btn-lg" onclick="startMatch('企业')">🔍 开始智能匹配</button>
         </div>
       </div>
     </div>
