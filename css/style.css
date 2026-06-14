@@ -236,6 +236,14 @@ section:nth-child(even) { background: var(--surface); }
 .steps-grid {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 12px;
 }
+.steps-with-arrows .step-card { position: relative; }
+.steps-with-arrows .step-card:not(:last-child)::after {
+  content: '→';
+  position: absolute; right: -18px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--primary); z-index: 2;
+}
 .step-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius-lg); padding: 32px 24px;
@@ -700,6 +708,7 @@ footer a { color: var(--primary-light); text-decoration: none; }
   .target-type-grid { grid-template-columns: 1fr; }
   .checklist-tabs { flex-direction: column; }
   .steps-grid { grid-template-columns: repeat(2, 1fr); }
+  .steps-with-arrows .step-card:not(:last-child)::after { display: none; }
   .form-row { grid-template-columns: 1fr; }
   .asset-cards { grid-template-columns: repeat(2, 1fr); }
   .purpose-grid { grid-template-columns: repeat(2, 1fr); }
