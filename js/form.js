@@ -13,7 +13,7 @@ const LoanForm = (function() {
     { id: 4, title: '确认并匹配',  icon: '✅' }
   ];
 
-  let currentStep = 1;
+  let currentStep = 0; // 0 = 初始选择页
   let formData = {};
 
   // --- 默认表单数据 ---
@@ -132,7 +132,7 @@ const LoanForm = (function() {
       formData.employmentType = DEFAULT_DATA.employmentType;
       formData.loanPurpose = DEFAULT_DATA.loanPurpose;
     }
-    currentStep = 1;
+    currentStep = 0;
     saveData();
     renderSteps();
     renderStep(currentStep);
@@ -141,7 +141,6 @@ const LoanForm = (function() {
 
   // --- 初始化 ---
   function init() {
-    // 从 localStorage 恢复数据
     const saved = localStorage.getItem('loandata_form');
     if (saved) {
       try {
@@ -152,7 +151,7 @@ const LoanForm = (function() {
     } else {
       formData = { ...DEFAULT_DATA };
     }
-    currentStep = 1;
+    currentStep = 0;
     renderSteps();
     renderStep(currentStep);
     updateNavigation();
@@ -172,11 +171,32 @@ const LoanForm = (function() {
     `).join('');
   }
 
+  // --- 初始选择页 ---
+  function renderStartPage(container) {
+    const isBusiness = formData.loanTarget === '企业';
+    container.innerHTML = `
+      <div style="max-width:500px;margin:0 auto;text-align:center;padding:20px 0;">
+        <h3 style="margin-bottom:20px;">请选择您要办理的贷款类型</h3>
+        <div class="form-loan-type-toggle" style="margin-bottom:24px;">
+          <button class="loan-type-btn ${!isBusiness ? 'active' : ''}" onclick="LoanForm.switchLoanType('个人')">
+            👤 我要办理个人贷款
+          </button>
+          <button class="loan-type-btn ${isBusiness ? 'active' : ''}" onclick="LoanForm.switchLoanType('企业')">
+            🏢 我要办理企业贷款
+          </button>
+        </div>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:8px;">
+          当前选择：<strong>${isBusiness ? '企业贷款' : '个人贷款'}</strong>
+        </p>
+      </div>
+    `;
+  }
+
   // --- 渲染当前步骤 ---
   function renderStep(step) {
     const container = document.getElementById('form-container');
     if (!container) return;
-
+    if (step === 0) { renderStartPage(container); return; }
     switch(step) {
       case 1: renderBasicInfo(container); break;
       case 2: renderAssets(container); break;
@@ -197,22 +217,10 @@ const LoanForm = (function() {
     const employOptions = isBusiness ? businessEmployTypes : EMPLOYMENT_TYPES;
 
     container.innerHTML = `
-      <!-- 贷款类型选择 -->
-      <div class="form-group">
-        <label class="form-label">我要办理</label>
-        <div class="form-loan-type-toggle">
-          <button class="loan-type-btn ${!isBusiness ? 'active' : ''}" onclick="LoanForm.switchLoanType('个人')">
-            👤 个人贷款
-          </button>
-          <button class="loan-type-btn ${isBusiness ? 'active' : ''}" onclick="LoanForm.switchLoanType('企业')">
-            🏢 企业贷款
-          </button>
-        </div>
-      </div>
-
       <!-- 当前通道标识 -->
       <div class="channel-badge ${isBusiness ? 'channel-business' : 'channel-personal'}">
-        ${isBusiness ? '🏢 当前：企业贷款资料填报' : '👤 当前：个人贷款资料填报'}
+        ${isBusiness ? '🏢 企业贷款资料填报' : '👤 个人贷款资料填报'}
+        <span style="font-weight:400;margin-left:8px;opacity:0.7;font-size:0.82rem;">（可返回上一步重新选择）</span>
       </div>
 
       <div class="form-group">
@@ -484,16 +492,37 @@ const LoanForm = (function() {
   function updateNavigation() {
     const prevBtn = document.getElementById('btn-prev');
     const nextBtn = document.getElementById('btn-next');
-    const matchBtn = document.getElementById('btn-start-match');
+    const indicator = document.getElementById('step-indicator');
 
-    if (prevBtn) prevBtn.style.display = currentStep > 1 ? '' : 'none';
-    if (nextBtn) nextBtn.style.display = currentStep < 4 ? '' : 'none';
-    if (matchBtn) matchBtn.style.display = 'none'; // step 4 has inline button
+    // 步骤指示器：step 0 隐藏，其余显示
+    if (indicator) indicator.style.display = currentStep === 0 ? 'none' : '';
+
+    if (prevBtn) {
+      prevBtn.style.display = currentStep > 1 ? '' : 'none';
+      if (currentStep === 1) prevBtn.textContent = '← 上一步';
+    }
+    if (nextBtn) {
+      if (currentStep === 0) {
+        nextBtn.style.display = '';
+        nextBtn.textContent = '开始填报 →';
+      } else if (currentStep < 4) {
+        nextBtn.style.display = '';
+        nextBtn.textContent = '下一步 →';
+      } else {
+        nextBtn.style.display = 'none';
+      }
+    }
   }
 
   // --- 导航 ---
   function nextStep() {
-    if (currentStep < 4) {
+    if (currentStep === 0) {
+      currentStep = 1;
+      renderSteps();
+      renderStep(currentStep);
+      updateNavigation();
+      document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (currentStep < 4) {
       currentStep++;
       renderSteps();
       renderStep(currentStep);
@@ -503,7 +532,7 @@ const LoanForm = (function() {
   }
 
   function prevStep() {
-    if (currentStep > 1) {
+    if (currentStep > 0) {
       currentStep--;
       renderSteps();
       renderStep(currentStep);
@@ -512,7 +541,7 @@ const LoanForm = (function() {
   }
 
   function goToStep(step) {
-    if (step >= 1 && step <= 4 && step <= currentStep) {
+    if (step >= 1 && step <= 4 && step <= currentStep && currentStep > 0) {
       currentStep = step;
       renderSteps();
       renderStep(currentStep);
@@ -604,7 +633,7 @@ const LoanForm = (function() {
   function reset() {
     formData = { ...DEFAULT_DATA };
     localStorage.removeItem('loandata_form');
-    currentStep = 1;
+    currentStep = 0;
     renderSteps();
     renderStep(currentStep);
     updateNavigation();
