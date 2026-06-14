@@ -231,6 +231,13 @@ function goToChecklist(type) {
 }
 
 function startMatch(target) {
+  // 更新表单标题
+  var title = document.getElementById('match-form-title');
+  var desc = document.getElementById('match-form-desc');
+  if (title) title.textContent = target === '企业' ? '🏢 企业贷款资料填报' : '👤 个人贷款资料填报';
+  if (desc) desc.textContent = target === '企业'
+    ? '请逐项填写企业信息，最后可上传企业征信报告辅助核对。'
+    : '请逐项填写个人信息，最后可上传个人征信报告辅助核对。';
   // 设置表单贷款对象
   if (typeof LoanForm !== 'undefined') LoanForm.setTarget(target);
   // 滚动到匹配区
