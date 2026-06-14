@@ -20,26 +20,6 @@ const App = (function() {
     console.log('✅ 智贷匹配平台就绪，已加载 ' + products.length + ' 款金融产品');
   }
 
-  // --- 加载产品数据 ---
-  async function loadProducts() {
-    try {
-      const resp = await fetch('data/products.json');
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      const data = await resp.json();
-      products = data.products || [];
-      // 同时存储版本信息
-      if (data.updatedAt) {
-        document.getElementById('data-update-date') && (document.getElementById('data-update-date').textContent = data.updatedAt);
-      }
-    } catch(e) {
-      console.error('加载产品数据失败:', e);
-      products = [];
-      // 显示错误提示
-      const notice = document.getElementById('data-error-notice');
-      if (notice) notice.style.display = 'block';
-    }
-  }
-
   // --- 匹配流程 ---
   function runMatching(userProfile) {
     if (!products.length) {
@@ -100,7 +80,10 @@ const App = (function() {
     const menu = document.getElementById('nav-menu');
     if (menuBtn && menu) {
       menuBtn.addEventListener('click', () => {
-        menu.classList.toggle('open');
+        const isOpen = menu.classList.toggle('open');
+        menuBtn.setAttribute('aria-expanded', isOpen);
+        menuBtn.setAttribute('aria-label', isOpen ? '关闭菜单' : '打开菜单');
+        menuBtn.textContent = isOpen ? '✕' : '☰';
       });
     }
 
@@ -134,15 +117,70 @@ const App = (function() {
   function renderTrustBar() {
     const bar = document.getElementById('trust-bar');
     if (!bar) return;
-    const banks = ['中国工商银行', '中国建设银行', '中国农业银行', '中国银行',
-                   '交通银行', '招商银行', '兴业银行', '浦发银行',
-                   '平安银行', '微众银行', '网商银行'];
+    // 银行名称与对应 emoji 图标
+    const bankIcons = {
+      '中国工商银行': '🏦', '中国建设银行': '🏗️', '中国农业银行': '🌾',
+      '中国银行': '🏛️', '交通银行': '🚢', '招商银行': '💼',
+      '兴业银行': '🌟', '浦发银行': '🏙️', '平安银行': '🛡️',
+      '微众银行': '📱', '网商银行': '💻'
+    };
+    // 优先从已加载的产品数据中提取银行列表
+    let banks;
+    if (products.length) {
+      const seen = new Set();
+      banks = products
+        .map(p => p.bankName)
+        .filter(name => { const keep = !seen.has(name); seen.add(name); return keep; });
+    } else {
+      banks = Object.keys(bankIcons);
+    }
     bar.innerHTML = `
       <span class="trust-label">合作银行与金融机构</span>
       <div class="trust-logos">
-        ${banks.map(b => `<span class="trust-bank-item">${b}</span>`).join('')}
+        ${banks.map(b => `<span class="trust-bank-item"><span class="trust-bank-icon">${bankIcons[b] || '🏦'}</span> ${b}</span>`).join('')}
       </div>
     `;
+  }
+
+  // --- 动态更新 Hero 推荐产品 ---
+  function updateHeroProduct() {
+    const heroCard = document.querySelector('.hero-card');
+    if (!heroCard || !products.length) return;
+    // 选择评分最高的产品作为推荐
+    const featured = [...products].sort((a, b) => b.rating - a.rating)[0];
+    if (!featured) return;
+    heroCard.querySelector('.hc-rate').textContent = featured.interestRate + '%';
+    heroCard.querySelector('.hc-header > div > div:last-child').textContent =
+      featured.bankShort + ' · ' + featured.productName;
+    const features = heroCard.querySelectorAll('.hc-feat');
+    if (features.length >= 4) {
+      features[0].querySelector('.check').nextSibling.textContent = ' 最高额度 ' + (featured.maxAmount / 10000).toFixed(0) + '万元';
+      features[1].querySelector('.check').nextSibling.textContent = featured.collateralRequired ? ' 抵押贷款' : ' 纯信用，无抵押';
+      features[2].querySelector('.check').nextSibling.textContent = ' ' + featured.approvalTime;
+      features[3].querySelector('.check').nextSibling.textContent = ' ' + featured.tags.slice(0, 2).join('，');
+    }
+  }
+
+  // --- 加载产品后更新 Hero ---
+  async function loadProducts() {
+    try {
+      const resp = await fetch('data/products.json');
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      products = data.products || [];
+      if (data.updatedAt) {
+        const el = document.getElementById('data-update-date');
+        if (el) el.textContent = data.updatedAt;
+      }
+      // 数据加载完成后渲染信任栏（使用真实银行列表）
+      renderTrustBar();
+      updateHeroProduct();
+    } catch(e) {
+      console.error('加载产品数据失败:', e);
+      products = [];
+      const notice = document.getElementById('data-error-notice');
+      if (notice) notice.style.display = 'block';
+    }
   }
 
   // --- 筛选器 ---
