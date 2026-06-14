@@ -109,6 +109,7 @@
       <li role="listitem"><a href="#hero" class="nav-link">首页</a></li>
       <li role="listitem"><a href="#match-section" class="nav-link">智能匹配</a></li>
       <li role="listitem"><a href="#guide" class="nav-link">贷款指南</a></li>
+      <li role="listitem"><a href="#checklist" class="nav-link">材料清单</a></li>
       <li role="listitem"><a href="#faq" class="nav-link">常见问题</a></li>
     </ul>
     <button class="nav-toggle" id="nav-toggle" aria-label="打开菜单" aria-expanded="false">☰</button>
@@ -168,7 +169,7 @@
         <div class="step-card">
           <div class="step-number">1</div>
           <h4>填写信用信息</h4>
-          <p>输入您的信用评分、收入状况、贷款需求等基本信息，支持上传征信报告PDF自动识别。</p>
+          <p>输入您的信用状况、收入水平、贷款需求等基本信息，也支持上传征信报告PDF自动识别填写。</p>
         </div>
         <div class="step-card">
           <div class="step-number">2</div>
@@ -190,14 +191,6 @@
       <span class="section-label">Smart Match</span>
       <h2 class="section-title">智能匹配</h2>
       <p class="section-desc">填写以下信息，系统将为您精准匹配贷款产品。</p>
-
-      <!-- PDF Upload (Beta) -->
-      <div class="pdf-upload-zone" id="pdf-upload-zone">
-        <div class="upload-icon">📄</div>
-        <div class="upload-text">上传征信报告（PDF格式）— 自动识别填写</div>
-        <div class="upload-hint">Beta 功能 · 所有处理在您的设备上完成</div>
-        <input type="file" accept=".pdf" id="pdf-file-input">
-      </div>
 
       <!-- Step Indicator -->
       <div class="step-indicator" id="step-indicator"></div>
@@ -291,6 +284,117 @@
           <div class="guide-a">
             贷款中介通常会收取贷款金额1%-5%的服务费。实际上，大部分银行的贷款产品信息都是公开透明的，您完全可以通过自行了解、对比来选择适合的产品。使用无游金服这样的工具，可以在不花费任何费用的情况下，快速了解自己能申请哪些银行的哪款产品。
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MATERIAL CHECKLIST ===== -->
+  <section id="checklist">
+    <div class="container">
+      <span class="section-label">Checklist</span>
+      <h2 class="section-title">贷款材料清单</h2>
+      <p class="section-desc">提前准备好这些材料，可以大幅提高贷款审批效率和通过率。</p>
+
+      <!-- Tab Switcher -->
+      <div class="checklist-tabs">
+        <button class="checklist-tab active" onclick="switchChecklist('personal')">👤 个人贷款材料</button>
+        <button class="checklist-tab" onclick="switchChecklist('business')">🏢 企业贷款材料</button>
+      </div>
+
+      <!-- Personal Checklist -->
+      <div class="checklist-content" id="checklist-personal">
+        <div class="checklist-group">
+          <h4>🪪 一、身份证明</h4>
+          <ul class="checklist-ul">
+            <li><strong>身份证</strong> — 原件+复印件，有效期内</li>
+            <li><strong>户口本</strong> — 首页+本人页（部分地区需要）</li>
+            <li><strong>结婚证/离婚证</strong> — 已婚或离异需提供</li>
+            <li><strong>居住证明</strong> — 近3个月水电煤账单或房屋租赁合同</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>💰 二、收入证明</h4>
+          <ul class="checklist-ul">
+            <li><strong>银行流水</strong> — 近6-12个月工资卡流水，银行柜台打印并盖章</li>
+            <li><strong>单位收入证明</strong> — 公司开具+盖公章，注明月收入、职务、入职时间</li>
+            <li><strong>劳动合同</strong> — 复印件，证明雇佣关系</li>
+            <li><strong>个税完税证明</strong> — 个人所得税APP导出或税务局打印</li>
+            <li><strong>社保/公积金缴存记录</strong> — 人社局或公积金中心查询打印</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>📊 三、征信与资产</h4>
+          <ul class="checklist-ul">
+            <li><strong>个人征信报告</strong> — 人民银行征信中心官网下载（简版）或柜台打印（详版）</li>
+            <li><strong>房产证</strong> — 如有，可作为资产证明加分</li>
+            <li><strong>车辆登记证</strong> — 如有，可作为资产证明加分</li>
+            <li><strong>定期存单/理财证明</strong> — 银行或券商出具</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>📎 四、专项贷款补充材料</h4>
+          <ul class="checklist-ul">
+            <li><strong>房贷：</strong>购房合同 + 首付款凭证 + 房屋评估报告</li>
+            <li><strong>车贷：</strong>购车合同 + 首付款收据 + 车辆合格证</li>
+            <li><strong>装修贷：</strong>装修合同 + 房产证（证明所有权）</li>
+            <li><strong>教育贷：</strong>录取通知书或学费单据</li>
+            <li><strong>信用贷：</strong>通常仅需身份证 + 收入证明 + 征信报告</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Business Checklist -->
+      <div class="checklist-content" id="checklist-business" style="display:none;">
+        <div class="checklist-group">
+          <h4>📜 一、主体资格</h4>
+          <ul class="checklist-ul">
+            <li><strong>营业执照</strong> — 正副本原件+复印件，已年检</li>
+            <li><strong>开户许可证</strong> — 银行基本户开户证明</li>
+            <li><strong>公司章程</strong> — 工商备案版本</li>
+            <li><strong>股东会/董事会决议</strong> — 同意申请贷款的正式决议文件</li>
+            <li><strong>法定代表人身份证</strong> — 原件+复印件，有效期内</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>📈 二、经营证明</h4>
+          <ul class="checklist-ul">
+            <li><strong>经营场所证明</strong> — 房产证或租赁合同 + 近3个月租金收据</li>
+            <li><strong>经营流水</strong> — 近12个月对公账户银行流水 + 个人经营账户流水</li>
+            <li><strong>购销合同</strong> — 上下游合同（采购+销售），证明业务真实性</li>
+            <li><strong>纳税证明</strong> — 近2年完税证明 + 纳税评级证书</li>
+            <li><strong>增值税发票汇总</strong> — 近6-12个月开票记录</li>
+            <li><strong>水电费单据</strong> — 近3个月（证明实际经营状态）</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>📊 三、财务报表</h4>
+          <ul class="checklist-ul">
+            <li><strong>审计报告</strong> — 近2-3年，会计师事务所出具</li>
+            <li><strong>财务报表</strong> — 资产负债表 + 利润表 + 现金流量表（近2年）</li>
+            <li><strong>科目明细</strong> — 应收账款、存货、固定资产等（近6个月）</li>
+            <li><strong>纳税申报表</strong> — 增值税 + 所得税申报表</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>🏭 四、资产与担保</h4>
+          <ul class="checklist-ul">
+            <li><strong>企业名下房产/土地证</strong> — 厂房、办公楼、商铺、工业用地</li>
+            <li><strong>设备清单及发票</strong> — 生产设备、运输车辆等固定资产</li>
+            <li><strong>法人/股东个人房产</strong> — 用于抵押增信</li>
+            <li><strong>第三方担保函</strong> — 担保公司或其他企业的担保承诺</li>
+            <li><strong>存单/理财质押</strong> — 定期存单、国债等可质押资产</li>
+          </ul>
+        </div>
+        <div class="checklist-group">
+          <h4>🔖 五、特定贷款补充材料</h4>
+          <ul class="checklist-ul">
+            <li><strong>税贷：</strong>近2年纳税记录 + 纳税评级证书</li>
+            <li><strong>发票贷：</strong>近12个月增值税开票数据</li>
+            <li><strong>供应链金融：</strong>核心企业合作协议 + 应收账款确权文件</li>
+            <li><strong>项目贷款：</strong>项目可行性报告 + 政府批文 + 环评报告</li>
+            <li><strong>科技贷：</strong>高新技术企业证书 + 专利证书 + 研发投入证明</li>
+          </ul>
         </div>
       </div>
     </div>

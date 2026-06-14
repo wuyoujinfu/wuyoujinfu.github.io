@@ -441,6 +441,14 @@ const LoanForm = (function() {
           🔒 您的数据仅在本地浏览器中处理，不会上传至任何服务器。
         </div>
 
+        <!-- PDF 征信报告上传（可选） -->
+        <div class="pdf-upload-zone" id="pdf-upload-zone" style="margin-bottom:20px;">
+          <div class="upload-icon">📄</div>
+          <div class="upload-text">上传征信报告（PDF格式）— 自动识别填写</div>
+          <div class="upload-hint">可选 · 所有处理在您的设备上完成 · 系统将自动解析关键字段</div>
+          <input type="file" accept=".pdf" id="pdf-file-input">
+        </div>
+
         <button class="btn-match" onclick="LoanForm.submitMatch()">
           🔍 开始智能匹配
         </button>
