@@ -3,4 +3,4 @@ Allow: /
 Disallow: /js/
 Disallow: /data/
 
-Sitemap: https://www.wuyoujinfu.com/sitemap.xml
+Sitemap: https://j98pbrbgmw-wq.github.io/you/sitemap.xml
