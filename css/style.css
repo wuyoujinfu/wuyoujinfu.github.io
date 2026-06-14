@@ -167,6 +167,10 @@ section:nth-child(even) { background: var(--surface); }
   font-size: 0.82rem; font-weight: 600; margin-bottom: 20px;
 }
 .hero-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--secondary); }
+.hero-subtitle {
+  font-size: 1.15rem; font-weight: 500; color: var(--text-secondary);
+  margin-top: 8px; margin-bottom: 0;
+}
 .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
 
 .hero-visual {
