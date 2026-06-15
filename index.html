@@ -361,7 +361,7 @@
 
         <!-- Navigation -->
         <div class="form-nav">
-          <button class="btn btn-outline" id="btn-prev" style="display:none;">← 上一步</button>
+          <button class="btn btn-outline" id="btn-prev" style="display:none;" onclick="handlePrevClick()">← 上一步</button>
           <button class="btn btn-primary" id="btn-next">下一步 →</button>
         </div>
       </div>
@@ -524,6 +524,20 @@ function selectGateType(type, btn) {
   btn.classList.add('active');
   var label = document.getElementById('gate-selected-label');
   if (label) label.innerHTML = '当前选择：<strong>' + (type === '企业' ? '企业贷款' : '个人贷款') + '</strong>';
+}
+
+// 上一步按钮统一处理
+function handlePrevClick() {
+  var prevBtn = document.getElementById('btn-prev');
+  // 如果按钮是"返回选择"，直接回入口页
+  if (prevBtn && prevBtn.textContent.indexOf('返回选择') !== -1) {
+    backToGate();
+    return;
+  }
+  // 否则交给 LoanForm 处理正常的返回上一步
+  if (typeof LoanForm !== 'undefined' && LoanForm.prevStep) {
+    LoanForm.prevStep();
+  }
 }
 
 function enterForm() {
