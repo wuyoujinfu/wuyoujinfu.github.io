@@ -505,8 +505,18 @@ const LoanForm = (function() {
 
   function prevStep() {
     if (currentStep === 1) {
-      // 第一步返回入口页
-      if (typeof backToGate === 'function') backToGate();
+      // 返回入口页
+      var gate = document.getElementById('form-gate');
+      var body = document.getElementById('form-body');
+      var indicator = document.getElementById('step-indicator');
+      var prevBtn = document.getElementById('btn-prev');
+      var nextBtn = document.getElementById('btn-next');
+      if (gate) gate.style.display = '';
+      if (body) body.style.display = 'none';
+      if (indicator) indicator.style.display = 'none';
+      if (prevBtn) prevBtn.style.display = 'none';
+      if (nextBtn) { nextBtn.style.display = ''; nextBtn.textContent = '开始填报 →'; }
+      document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
     if (currentStep > 1) {
