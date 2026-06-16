@@ -526,18 +526,59 @@ function selectGateType(type, btn) {
   if (label) label.innerHTML = '当前选择：<strong>' + (type === '企业' ? '企业贷款' : '个人贷款') + '</strong>';
 }
 
+var __formStep = 1;
+
 // 下一步按钮统一处理
 function handleNextClick() {
   var nextBtn = document.getElementById('btn-next');
-  // 如果按钮是"开始填报"，显示表单
+  // 如果按钮是"开始填报"
   if (nextBtn && nextBtn.textContent.indexOf('开始填报') !== -1) {
     enterForm();
     return;
   }
-  // 否则交给 LoanForm 处理正常的下一步
-  if (typeof LoanForm !== 'undefined' && LoanForm.nextStep) {
-    LoanForm.nextStep();
+  // 表单步骤推进
+  if (__formStep < 4) {
+    __formStep++;
+    // 通知 LoanForm（如果可用）
+    if (typeof LoanForm !== 'undefined' && LoanForm.nextStep) {
+      try { LoanForm.nextStep(); } catch(e) { console.log('LoanForm.nextStep error:', e); }
+    }
+    updateNavButtons();
+    document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+}
+
+function updateNavButtons() {
+  var prevBtn = document.getElementById('btn-prev');
+  var nextBtn = document.getElementById('btn-next');
+  if (prevBtn) {
+    if (__formStep === 1) {
+      prevBtn.style.display = '';
+      prevBtn.textContent = '← 返回选择';
+    } else if (__formStep > 1) {
+      prevBtn.style.display = '';
+      prevBtn.textContent = '← 上一步';
+    }
+  }
+  if (nextBtn) {
+    if (__formStep < 4) {
+      nextBtn.style.display = '';
+      nextBtn.textContent = '下一步 →';
+    } else {
+      nextBtn.style.display = 'none';
+    }
+  }
+}
+
+// 重置表单状态
+function resetFormState() {
+  __formStep = 1;
+  var prevBtn = document.getElementById('btn-prev');
+  var nextBtn = document.getElementById('btn-next');
+  var indicator = document.getElementById('step-indicator');
+  if (prevBtn) { prevBtn.style.display = ''; prevBtn.textContent = '← 返回选择'; }
+  if (nextBtn) { nextBtn.style.display = ''; nextBtn.textContent = '下一步 →'; }
+  if (indicator) indicator.style.display = '';
 }
 
 // 上一步按钮统一处理
@@ -571,6 +612,12 @@ function enterForm() {
     LoanForm.setTarget(__loanTarget);
   }
 
+  // 初始化表单步骤
+  __formStep = 1;
+  updateNavButtons();
+  var indicator = document.getElementById('step-indicator');
+  if (indicator) indicator.style.display = '';
+
   document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -586,6 +633,7 @@ function backToGate() {
   if (indicator) indicator.style.display = 'none';
   if (prevBtn) prevBtn.style.display = 'none';
   if (nextBtn) { nextBtn.style.display = ''; nextBtn.textContent = '开始填报 →'; }
+  __formStep = 1;
   document.getElementById('match-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
