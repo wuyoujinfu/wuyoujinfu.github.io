@@ -362,7 +362,7 @@
         <!-- Navigation -->
         <div class="form-nav">
           <button class="btn btn-outline" id="btn-prev" style="display:none;" onclick="handlePrevClick()">← 上一步</button>
-          <button class="btn btn-primary" id="btn-next">下一步 →</button>
+          <button class="btn btn-primary" id="btn-next" onclick="handleNextClick()">下一步 →</button>
         </div>
       </div>
 
@@ -524,6 +524,20 @@ function selectGateType(type, btn) {
   btn.classList.add('active');
   var label = document.getElementById('gate-selected-label');
   if (label) label.innerHTML = '当前选择：<strong>' + (type === '企业' ? '企业贷款' : '个人贷款') + '</strong>';
+}
+
+// 下一步按钮统一处理
+function handleNextClick() {
+  var nextBtn = document.getElementById('btn-next');
+  // 如果按钮是"开始填报"，显示表单
+  if (nextBtn && nextBtn.textContent.indexOf('开始填报') !== -1) {
+    enterForm();
+    return;
+  }
+  // 否则交给 LoanForm 处理正常的下一步
+  if (typeof LoanForm !== 'undefined' && LoanForm.nextStep) {
+    LoanForm.nextStep();
+  }
 }
 
 // 上一步按钮统一处理
