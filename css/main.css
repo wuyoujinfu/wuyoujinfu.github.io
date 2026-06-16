@@ -387,6 +387,10 @@ section:nth-child(even) { background: var(--surface); }
 .target-desc { font-size: 0.78rem; color: var(--text-muted); }
 .target-card.selected .target-label { color: var(--primary); }
 
+/* Asset Section */
+.asset-section { margin-bottom: 24px; padding: 18px 20px; background: var(--bg); border-radius: var(--radius-lg); border: 1px solid var(--border-light); }
+.asset-section-title { margin-bottom: 14px; font-size: 1rem; }
+
 /* Asset Cards */
 .asset-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .asset-card {

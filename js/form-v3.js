@@ -24,9 +24,15 @@ const LoanForm = (function() {
     monthlyIncome: 15000,
     employmentType: '受薪雇员',
     hasSocialSecurity: true,
+    socialSecurityBase: 8000,
     hasHousingFund: true,
+    housingFundBase: 8000,
+    housingFundMonths: 12,
     hasProperty: false,
+    propertyValue: 0,
+    propertyMortgage: false,
     hasCar: false,
+    carValue: 0,
     existingDebtMonthly: 0,
     loanPurpose: '个人消费',
     loanAmount: 100000,
@@ -284,19 +290,114 @@ const LoanForm = (function() {
   // --- Step 2: 资产与负债 ---
   function renderAssets(container) {
     const isBusiness = formData.loanTarget === '企业';
-    const checks = isBusiness ? [
-      { key: 'hasProperty',       label: '企业房产', icon: '🏭' },
-      { key: 'hasCar',            label: '企业车辆', icon: '🚛' },
-      { key: 'hasBusinessProperty', label: '经营场所', icon: '🏢' },
-    ] : [
-      { key: 'hasSocialSecurity', label: '缴纳社保', icon: '🏦' },
-      { key: 'hasHousingFund',    label: '缴纳公积金', icon: '🏡' },
-      { key: 'hasProperty',       label: '名下房产', icon: '🏠' },
-      { key: 'hasCar',            label: '名下车辆', icon: '🚗' }
-    ];
-
+    if (isBusiness) { renderBusinessAssets(container); return; }
+    // 个人用户：详细资产信息
     container.innerHTML = `
-      <div class="asset-cards ${isBusiness ? 'asset-cards-3' : ''}">
+      <!-- 社保信息 -->
+      <div class="asset-section">
+        <h4 class="asset-section-title">🏦 社保信息</h4>
+        <div class="form-checkbox" style="margin-bottom:12px;">
+          <input type="checkbox" id="hasSocialSecurity" ${formData.hasSocialSecurity ? 'checked' : ''}
+                 onchange="LoanForm.updateCheckbox(this)" data-field="hasSocialSecurity">
+          <label for="hasSocialSecurity">缴纳社保</label>
+        </div>
+        ${formData.hasSocialSecurity ? `
+        <div class="form-group">
+          <label class="form-label">社保缴纳基数（元/月）</label>
+          <input type="number" class="form-input" value="${formData.socialSecurityBase}"
+                 data-field="socialSecurityBase" onchange="LoanForm.updateField(this)" min="0" step="100" placeholder="社保缴费基数">
+          <p class="form-hint">社保基数越高，可贷额度通常越高</p>
+        </div>` : ''}
+      </div>
+
+      <!-- 公积金信息 -->
+      <div class="asset-section">
+        <h4 class="asset-section-title">🏡 公积金信息</h4>
+        <div class="form-checkbox" style="margin-bottom:12px;">
+          <input type="checkbox" id="hasHousingFund" ${formData.hasHousingFund ? 'checked' : ''}
+                 onchange="LoanForm.updateCheckbox(this)" data-field="hasHousingFund">
+          <label for="hasHousingFund">缴纳公积金</label>
+        </div>
+        ${formData.hasHousingFund ? `
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">公积金缴纳基数（元/月）</label>
+            <input type="number" class="form-input" value="${formData.housingFundBase}"
+                   data-field="housingFundBase" onchange="LoanForm.updateField(this)" min="0" step="100" placeholder="公积金缴费基数">
+          </div>
+          <div class="form-group">
+            <label class="form-label">连续缴存月数</label>
+            <input type="number" class="form-input" value="${formData.housingFundMonths}"
+                   data-field="housingFundMonths" onchange="LoanForm.updateField(this)" min="0" max="360" placeholder="已连续缴存多少个月">
+          </div>
+        </div>
+        <p class="form-hint">公积金连续缴存满12个月可申请公积金信用贷，额度与基数和缴存时长挂钩</p>
+        ` : ''}
+      </div>
+
+      <!-- 房产信息 -->
+      <div class="asset-section">
+        <h4 class="asset-section-title">🏠 房产信息</h4>
+        <div class="form-checkbox" style="margin-bottom:12px;">
+          <input type="checkbox" id="hasProperty" ${formData.hasProperty ? 'checked' : ''}
+                 onchange="LoanForm.updateCheckbox(this)" data-field="hasProperty">
+          <label for="hasProperty">名下拥有房产</label>
+        </div>
+        ${formData.hasProperty ? `
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">房产估值（万元）</label>
+            <input type="number" class="form-input" value="${formData.propertyValue}"
+                   data-field="propertyValue" onchange="LoanForm.updateField(this)" min="0" step="10" placeholder="房产市场估值">
+          </div>
+        </div>
+        <div class="form-checkbox" style="margin-bottom:8px;">
+          <input type="checkbox" id="propertyMortgage" ${formData.propertyMortgage ? 'checked' : ''}
+                 onchange="LoanForm.updateCheckbox(this)" data-field="propertyMortgage">
+          <label for="propertyMortgage">该房产正在按揭中</label>
+        </div>
+        <p class="form-hint">有名下房产可大幅提升信用贷额度和抵押贷通过率</p>
+        ` : ''}
+      </div>
+
+      <!-- 车辆信息 -->
+      <div class="asset-section">
+        <h4 class="asset-section-title">🚗 车辆信息</h4>
+        <div class="form-checkbox" style="margin-bottom:12px;">
+          <input type="checkbox" id="hasCar" ${formData.hasCar ? 'checked' : ''}
+                 onchange="LoanForm.updateCheckbox(this)" data-field="hasCar">
+          <label for="hasCar">名下拥有车辆</label>
+        </div>
+        ${formData.hasCar ? `
+        <div class="form-group">
+          <label class="form-label">车辆估值（万元）</label>
+          <input type="number" class="form-input" value="${formData.carValue}"
+                 data-field="carValue" onchange="LoanForm.updateField(this)" min="0" step="1" placeholder="车辆当前估值">
+        </div>` : ''}
+      </div>
+
+      <!-- 现有负债 -->
+      <div class="asset-section">
+        <h4 class="asset-section-title">💳 现有负债</h4>
+        <div class="form-group">
+          <label class="form-label">现有月负债（元）</label>
+          <span class="form-tooltip" title="包括房贷月供、车贷月供、信用卡最低还款等">ⓘ</span>
+          <input type="number" class="form-input" value="${formData.existingDebtMonthly}"
+                 data-field="existingDebtMonthly" onchange="LoanForm.updateField(this)" min="0" step="100" placeholder="当前每月需还的其他贷款">
+          <p class="form-hint">银行会综合评估您的总负债与收入比（DTI），建议月供不超过月收入50%</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderBusinessAssets(container) {
+    const checks = [
+      { key: 'hasProperty', label: '企业房产', icon: '🏭' },
+      { key: 'hasCar', label: '企业车辆', icon: '🚛' },
+      { key: 'hasBusinessProperty', label: '经营场所', icon: '🏢' },
+    ];
+    container.innerHTML = `
+      <div class="asset-cards asset-cards-3">
         ${checks.map(c => `
           <div class="asset-card ${formData[c.key] ? 'selected' : ''}"
                data-field="${c.key}" onclick="LoanForm.toggleAsset(this)">
@@ -306,15 +407,12 @@ const LoanForm = (function() {
           </div>
         `).join('')}
       </div>
-
       <div class="form-group" style="margin-top:24px;">
-        <label class="form-label">
-          ${isBusiness ? '现有月负债（元，含经营贷月供）' : '现有月负债（元）'}
-          <span class="form-tooltip" title="${isBusiness ? '包括经营贷款月供、信用卡还款等' : '包括房贷月供、车贷月供、信用卡最低还款等'}">ⓘ</span>
-        </label>
+        <label class="form-label">现有月负债（元，含经营贷月供）</label>
+        <span class="form-tooltip" title="包括经营贷款月供、信用卡还款等">ⓘ</span>
         <input type="number" class="form-input" value="${formData.existingDebtMonthly}"
                data-field="existingDebtMonthly" onchange="LoanForm.updateField(this)" min="0" step="100" placeholder="当前每月需还的其他贷款">
-        <p class="form-hint">${isBusiness ? '银行会综合评估企业经营负债与收入比' : '银行会综合评估您的总负债与收入比（DTI）'}</p>
+        <p class="form-hint">银行会综合评估企业经营负债与收入比</p>
       </div>
     `;
   }
@@ -399,12 +497,20 @@ const LoanForm = (function() {
         <span class="review-value">¥${Number(formData.monthlyIncome).toLocaleString()}</span>
       </div>
       <div class="review-item">
-        <span class="review-label">社保/公积金</span>
-        <span class="review-value">${formData.hasSocialSecurity ? '有社保' : '无社保'} · ${formData.hasHousingFund ? '有公积金' : '无公积金'}</span>
+        <span class="review-label">社保</span>
+        <span class="review-value">${formData.hasSocialSecurity ? '有（基数¥'+Number(formData.socialSecurityBase).toLocaleString()+'）' : '无'}</span>
       </div>
       <div class="review-item">
-        <span class="review-label">资产</span>
-        <span class="review-value">${formData.hasProperty ? '有房' : '无房'} · ${formData.hasCar ? '有车' : '无车'}</span>
+        <span class="review-label">公积金</span>
+        <span class="review-value">${formData.hasHousingFund ? '有（基数¥'+Number(formData.housingFundBase).toLocaleString()+'，缴存'+formData.housingFundMonths+'个月）' : '无'}</span>
+      </div>
+      <div class="review-item">
+        <span class="review-label">房产</span>
+        <span class="review-value">${formData.hasProperty ? '有（估值¥'+Number(formData.propertyValue).toLocaleString()+'万'+(formData.propertyMortgage?'，按揭中':'，无按揭')+'）' : '无'}</span>
+      </div>
+      <div class="review-item">
+        <span class="review-label">车辆</span>
+        <span class="review-value">${formData.hasCar ? '有（估值¥'+Number(formData.carValue).toLocaleString()+'万）' : '无'}</span>
       </div>
     `;
 

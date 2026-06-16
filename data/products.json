@@ -357,8 +357,9 @@
       "supportedPurposes": ["个人消费", "装修", "购车", "教育"],
       "maxDTI": 0.50,
       "requiresSocialSecurity": true, "requiresHousingFund": true, "collateralRequired": false,
+      "minHousingFundMonths": 12, "minHousingFundBase": 5000,
       "approvalTime": "3-5个工作日",
-      "requirements": "公积金连续缴存满12个月",
+      "requirements": "公积金连续缴存满12个月，基数不低于5000元",
       "applyUrl": "https://www.abchina.com", "contactPhone": "95599",
       "tags": ["公积金", "利率极低", "纯信用"], "rating": 4.7
     },

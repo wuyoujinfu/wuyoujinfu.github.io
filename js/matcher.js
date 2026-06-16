@@ -139,10 +139,36 @@ const Matcher = (function() {
     }
 
     // --- 7. 加分项 (5%) ---
-    if (user.hasSocialSecurity)  scoreExtras += 25;
-    if (user.hasHousingFund)     scoreExtras += 30;
-    if (user.hasProperty)        scoreExtras += 25;
-    if (user.hasCar)             scoreExtras += 20;
+    if (user.hasSocialSecurity) {
+      scoreExtras += 10;
+      // 社保基数越高越好（8000为基准）
+      var sb = user.socialSecurityBase || 0;
+      if (sb >= 15000) scoreExtras += 15;
+      else if (sb >= 10000) scoreExtras += 10;
+      else if (sb >= 5000) scoreExtras += 5;
+    }
+    if (user.hasHousingFund) {
+      scoreExtras += 10;
+      var hb = user.housingFundBase || 0;
+      var hm = user.housingFundMonths || 0;
+      if (hb >= 15000 && hm >= 24) scoreExtras += 20;
+      else if (hb >= 10000 && hm >= 12) scoreExtras += 15;
+      else if (hb >= 5000 && hm >= 6) scoreExtras += 8;
+      else scoreExtras += 3;
+    }
+    if (user.hasProperty) {
+      scoreExtras += 10;
+      var pv = user.propertyValue || 0;
+      if (pv >= 500) scoreExtras += 15;
+      else if (pv >= 200) scoreExtras += 10;
+      else if (pv >= 50) scoreExtras += 5;
+    }
+    if (user.hasCar) {
+      scoreExtras += 5;
+      var cv = user.carValue || 0;
+      if (cv >= 20) scoreExtras += 10;
+      else if (cv >= 10) scoreExtras += 5;
+    }
 
     // --- 8. 特殊条件检查 ---
     if (product.requiresSocialSecurity && !user.hasSocialSecurity) {
@@ -150,6 +176,15 @@ const Matcher = (function() {
     }
     if (product.requiresHousingFund && !user.hasHousingFund) {
       disqualifiers.push('该产品要求缴纳公积金');
+    }
+    // 公积金产品额外检查
+    if (product.requiresHousingFund && user.hasHousingFund) {
+      if (product.minHousingFundMonths && (user.housingFundMonths || 0) < product.minHousingFundMonths) {
+        disqualifiers.push('公积金连续缴存不足' + product.minHousingFundMonths + '个月');
+      }
+      if (product.minHousingFundBase && (user.housingFundBase || 0) < product.minHousingFundBase) {
+        disqualifiers.push('公积金基数低于产品要求（' + product.minHousingFundBase + '元）');
+      }
     }
 
     // --- 加权计算 ---
